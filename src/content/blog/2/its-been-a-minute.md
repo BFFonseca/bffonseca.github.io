@@ -3,15 +3,17 @@ title: "It's been a minute"
 description: "An update on what's been going on"
 date: '2026-06-16'
 tags: ['update', 'software', 'hardware', 'linux', 'website', 'project-debugled']
-draft: true
+draft: false
 ---
+
+An update on the state of things.
 
 ## Hey there..! 👋
 
 <!-- A short paragraph on what you've been working on or thinking about.
      No need for a hook — this is a checkpoint, not a story. -->
 
-It's been a while, uh? I've been busy with... well... life I guess.
+It's been a minute, uh? I've been busy with... well... life I guess.
 
 A lot has happened in the last 3 months since my first blog post. It's been a little bit all over the place 🙃
 
