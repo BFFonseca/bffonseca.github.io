@@ -3,7 +3,7 @@ title: "It's been a minute"
 description: "An update on what's been going on"
 date: '2026-06-16'
 tags: ['update', 'software', 'hardware', 'linux', 'website', 'project-debugled']
-draft: true
+draft: false
 ---
 
 ## Hey there..! 👋
