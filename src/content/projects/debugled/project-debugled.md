@@ -1,5 +1,5 @@
 ---
-title: 'Project DebugLED'
+title: 'DebugLED'
 description: 'This Website! Dedicated to my projects and some thoughts that cross my mind.'
 tags: ['TypeScript', 'CSS', 'Astro', 'Claude']
 repo: 'https://github.com/BFFonseca/bffonseca.github.io'

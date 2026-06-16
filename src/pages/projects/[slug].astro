@@ -13,20 +13,23 @@ export async function getStaticPaths() {
 
 const { project } = Astro.props;
 const { Content } = await render(project);
+const title = `Project: ${project.data.title}`;
 
 // Fetch all blog posts
 const blogPosts = await getCollection("blog");
 
 // Filter blog posts that have this project's relatedTag
-const relatedPosts = blogPosts.filter((post) => {
-  return (
-    project.data.relatedTag && post.data.tags?.includes(project.data.relatedTag)
-  );
-});
+const relatedPosts = blogPosts
+  .filter((post) => {
+    return (
+      project.data.relatedTag && post.data.tags?.includes(project.data.relatedTag) && !post.data.draft
+    );
+  })
+  .sort((a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime());
 ---
 
 <BaseLayout
-  title={project.data.title}
+  title={title}
   description={project.data.description}
 >
   <div class="mb-20">
@@ -38,7 +41,7 @@ const relatedPosts = blogPosts.filter((post) => {
     </a>
 
     <article>
-      <h1 class="section-title text-4xl mb-4">{project.data.title}</h1>
+      <h1 class="section-title text-4xl mb-4">{title}</h1>
 
       <div class="flex flex-wrap gap-2 mb-6">
         {
