@@ -1,18 +1,18 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro';
+import BaseLayout from "../layouts/BaseLayout.astro";
 ---
 
 <BaseLayout title="Home">
   <!-- Hero -->
   <section class="mb-20">
-    <p class="font-mono t-accent text-sm mb-3">hello, world —</p>
     <h1 class="font-display text-5xl font-bold t-text leading-tight mb-5">
       Welcome to <span class="t-accent">DebugLED</span>.<br />
       The most important component.
     </h1>
     <p class="t-muted text-lg leading-relaxed mb-8">
-      Developer, maker, and occasional writer. This is where I document my projects,
-      share what I learn, and keep an online presence that isn't LinkedIn.
+      Developer, maker, and occasional writer. This is where I document my
+      projects, share what I learn, and keep an online presence that isn't
+      LinkedIn.
     </p>
     <div class="flex gap-4">
       <a href="/projects" class="btn-primary">View Projects</a>
@@ -29,9 +29,12 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         My name's Bruno and I love to build things and watch cool stuff happen!
       </p>
       <p class="t-muted leading-relaxed">
-        Currently working on: <span class="t-text">this website!</span><br>
-        Yes, this website is my currently on-going project.<br>
-        Find out more on my first blog post: <a href="/blog/hello-debugled" class="t-accent hover:underline">Hello DebugLED</a>
+        Currently working on: <span class="t-text">this website!</span><br />
+        Yes, this website is my currently on-going project.<br />
+        Find out more on my first blog post: <a
+          href="/blog/hello-debugled"
+          class="t-accent hover:underline">Hello DebugLED</a
+        >
       </p>
     </div>
   </section>
@@ -39,17 +42,36 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   <!-- Skills / Stack -->
   <section>
     <h2 class="section-title">Toolbox</h2>
-    <p class="led-accent text-sm mb-6">This is what I work with</p>
+    <p class="led-accent text-sm mb-6">These are the tools I use</p>
     <div class="flex flex-wrap gap-2">
-      {['C', 'C++', 'Python', 'Git', 'VSCode', 'bash', 'OrcaSlicer', 'Autodesk Fusion', 'HomeAssistant', 'Claude', 'ChatGPT'].map(skill => (
-        <span class="skill-tag font-mono text-xs px-3 py-1.5 rounded-full border t-muted b-border hover-accent transition-colors">
-          {skill}
-        </span>
-      ))}
+      {
+        [
+          "C",
+          "C++",
+          "Python",
+          "Git",
+          "VSCode",
+          "bash",
+          "Antigravity IDE",
+          "Claude",
+          "ChatGPT",
+          "OrcaSlicer",
+          "Autodesk Fusion",
+          "KiCad",
+          "HomeAssistant",
+          "Godot Engine",
+        ].map((skill) => (
+          <span class="skill-tag font-mono text-xs px-3 py-1.5 rounded-full border t-muted b-border hover-accent transition-colors">
+            {skill}
+          </span>
+        ))
+      }
     </div>
   </section>
 </BaseLayout>
 
 <style>
-  .skill-tag:hover { border-color: var(--accent); }
+  .skill-tag:hover {
+    border-color: var(--accent);
+  }
 </style>
