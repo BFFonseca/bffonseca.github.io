@@ -1,8 +1,8 @@
 ---
-title: 'Hello debugLED'
+title: 'Hello DebugLED'
 description: 'The obligatory first post. Why I started this site and what to expect.'
 date: '2026-03-25'
-tags: ['software', 'AI', 'Claude', 'project', 'website', 'Astro']
+tags: ['software', 'AI', 'Claude', 'website', 'Astro', 'project-debugled']
 draft: false
 ---
 Welcome to DebugLED. This is the first post and in it I will be telling you why I started this website and how.
@@ -28,7 +28,7 @@ Sure it can automate some of those routine tasks when you have to write repetiti
 After hearing so much about Claude and its capabilities to start a project from the ground up, I was intrigued. This, together with the fact that I know absolutely nothing about web dev and the closest experience I have is writing some Python scripts, seemed like a good project to try. Both because of my lack of experience in the field, but mostly because it's a software-only project, so it won't get stuck with interpreting datasheets wrongly (which I'm also curious about how Claude performs, but that's something to try later).
 
 So here we are. After telling Claude what I wanted to do on my website (projects + blog) and asking what my options were, I settled on GitHub Pages with a custom domain. For the framework, it recommended Astro for its "easiest modern setup", "community favourite", being a good fit for GitHub Pages and easy to migrate to another hosting platform if I want or need in the future.
-![Claude's evaluation of Astro, recommending it for its ease of use and popularity](image/hello-world/1774466577886.png "Astro recommendation by Claude")
+![Claude's evaluation of Astro, recommending it for its ease of use and popularity](media/1774466577886.png "Astro recommendation by Claude")
 
 This, plus the fact that I wanted to get the page up and running as fast as possible, led me to go with it.
 

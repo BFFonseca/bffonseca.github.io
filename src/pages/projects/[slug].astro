@@ -1,0 +1,98 @@
+---
+import { getCollection, render } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import ProjectSidebar from "../../components/ProjectSidebar.astro";
+
+export async function getStaticPaths() {
+  const projects = await getCollection("projects");
+  return projects.map((project) => ({
+    params: { slug: project.id.split("/").pop()?.replace(/\.md$/, "") },
+    props: { project },
+  }));
+}
+
+const { project } = Astro.props;
+const { Content } = await render(project);
+const title = `Project: ${project.data.title}`;
+
+// Fetch all blog posts
+const blogPosts = await getCollection("blog");
+
+// Filter blog posts that have this project's relatedTag
+const relatedPosts = blogPosts
+  .filter((post) => {
+    return (
+      project.data.relatedTag && post.data.tags?.includes(project.data.relatedTag) && !post.data.draft
+    );
+  })
+  .sort((a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime());
+---
+
+<BaseLayout
+  title={title}
+  description={project.data.description}
+>
+  <div class="mb-20">
+    <a
+      href="/projects"
+      class="text-sm font-mono t-muted hover-accent transition-colors mb-8 inline-block"
+    >
+      ← back to projects
+    </a>
+
+    <article>
+      <h1 class="section-title text-4xl mb-4">{title}</h1>
+
+      <div class="flex flex-wrap gap-2 mb-6">
+        {
+          project.data.tags.map((tag: string) => (
+            <span class="whitespace-nowrap font-mono text-xs t-muted b-border border px-2 py-1 rounded">
+              {tag}
+            </span>
+          ))
+        }
+      </div>
+
+      {
+        (project.data.repo || project.data.live) && (
+          <div class="mb-8 flex gap-4 font-mono text-sm">
+            {project.data.repo && (
+              <a
+                href={project.data.repo}
+                target="_blank"
+                rel="noopener"
+                class="t-accent hover:underline"
+              >
+                GitHub Repo ↗
+              </a>
+            )}
+            {project.data.live && (
+              <a
+                href={project.data.live}
+                target="_blank"
+                rel="noopener"
+                class="t-accent hover:underline"
+              >
+                Live View ↗
+              </a>
+            )}
+          </div>
+        )
+      }
+
+      <div class="prose-content">
+        <Content />
+      </div>
+    </article>
+
+    <!-- Mobile Sidebar -->
+    <aside class="block 2xl:hidden mt-16 pt-8 border-t b-border">
+      <ProjectSidebar relatedPosts={relatedPosts} />
+    </aside>
+  </div>
+
+  <!-- Desktop Sidebar -->
+  <Fragment slot="sidebar">
+    <ProjectSidebar relatedPosts={relatedPosts} />
+  </Fragment>
+</BaseLayout>

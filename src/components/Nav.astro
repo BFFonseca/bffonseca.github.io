@@ -6,11 +6,11 @@ const navLinks = [
   { href: '/about',  label: 'about'  },
 ];
 
-const currentPath = Astro.url.pathname.replace(/\/$/, '') || '/';
+const pathname = new URL(Astro.request.url).pathname;
+const currentPath = pathname.slice(1);
 ---
 
-<header class="border-b px-6 py-4" style="border-color: var(--border); background-color: var(--bg);">
-  <nav class="max-w-4xl mx-auto flex items-center justify-between">
+<nav class="w-full flex items-center justify-between">
     <a href="/" class="font-mono font-medium text-lg tracking-tight" style="color: var(--accent);">
       debug<span style="color: var(--text);">LED</span>
     </a>
@@ -39,8 +39,7 @@ const currentPath = Astro.url.pathname.replace(/\/$/, '') || '/';
         <span id="theme-icon">☀️</span>
       </button>
     </div>
-  </nav>
-</header>
+</nav>
 
 <style>
   .active-link { color: var(--accent) !important; }

@@ -9,6 +9,7 @@ interface Props {
 }
 
 const { title, description = 'DebugLED — personal site, projects & blog.' } = Astro.props;
+const hasSidebar = Astro.slots.has('sidebar');
 ---
 
 <!DOCTYPE html>
@@ -25,11 +26,33 @@ const { title, description = 'DebugLED — personal site, projects & blog.' } = 
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <title>{title} · DebugLED</title>
   </head>
-  <body class="min-h-screen flex flex-col">
-    <Nav />
-    <main class="flex-1 max-w-4xl mx-auto w-full px-6 py-16">
-      <slot />
-    </main>
-    <Footer />
+  <body class="min-h-screen flex flex-col bg-[var(--bg)] overflow-x-hidden">
+    <!-- Full-width sticky header wrapper -->
+    <header class="py-6 border-b b-border sticky top-0 bg-[var(--bg)]/90 backdrop-blur z-50">
+      <div class="w-full max-w-4xl mx-auto px-6">
+        <Nav />
+      </div>
+    </header>
+
+    <!-- Main Content Wrapper -->
+    <div class="relative w-full max-w-4xl mx-auto px-6 flex-1 flex flex-col">
+      <main class="flex-1 w-full py-16">
+        <slot />
+      </main>
+
+      {/* Desktop Sidebar Slot */}
+      {hasSidebar && (
+        <aside class="hidden 2xl:block absolute top-0 left-full ml-8 w-64 pt-16 pl-6 border-l b-border opacity-80 hover:opacity-100 transition-opacity">
+          <slot name="sidebar" />
+        </aside>
+      )}
+    </div>
+
+    <!-- Full-width footer wrapper -->
+    <div class="border-t b-border mt-auto">
+      <div class="w-full max-w-4xl mx-auto px-6">
+        <Footer />
+      </div>
+    </div>
   </body>
 </html>

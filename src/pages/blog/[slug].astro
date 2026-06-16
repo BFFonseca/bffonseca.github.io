@@ -1,11 +1,11 @@
 ---
-import { getCollection, render } from 'astro:content';
-import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection, render } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
 
 export async function getStaticPaths() {
-  const posts = await getCollection('blog', ({ data }) => !data.draft);
-  return posts.map(post => ({
-    params: { slug: post.id.replace(/\.md$/, '') },
+  const posts = await getCollection("blog", ({ data }) => !data.draft);
+  return posts.map((post) => ({
+    params: { slug: post.id.split("/").pop()?.replace(/\.md$/, "") },
     props: { post },
   }));
 }
@@ -16,18 +16,23 @@ const { title, description, date, tags } = post.data;
 ---
 
 <BaseLayout title={title} description={description}>
-  <article class="max-w-2xl">
-    <a href="/blog" class="font-mono text-sm t-muted hover-accent transition-colors mb-8 inline-block">
+  <article class="max-w-3xl">
+    <a
+      href="/blog"
+      class="font-mono text-sm t-muted hover-accent transition-colors mb-8 inline-block"
+    >
       ← back to blog
     </a>
 
     <header class="mb-10">
-      <div class="flex gap-2 mb-4">
-        {tags.map(tag => (
-          <span class="font-mono text-xs t-accent b-accent border px-2 py-1 rounded-full">
-            #{tag}
-          </span>
-        ))}
+      <div class="flex flex-wrap gap-2 mb-4">
+        {
+          tags.map((tag) => (
+            <span class="whitespace-nowrap font-mono text-xs t-accent b-accent border px-2 py-1 rounded-full">
+              {tag}
+            </span>
+          ))
+        }
       </div>
       <h1 class="font-display text-4xl font-bold t-text mb-3">{title}</h1>
       <time class="font-mono text-sm t-muted">{date}</time>

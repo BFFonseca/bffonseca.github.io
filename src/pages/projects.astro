@@ -1,24 +1,8 @@
 ---
+import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 
-const projects = [
-  {
-    title: 'Project Alpha',
-    description: 'A short description of what this project does and why it matters.',
-    tags: ['TypeScript', 'Astro'],
-    repo: 'https://github.com/',
-    live: '',
-    status: 'active',
-  },
-  {
-    title: 'Project Beta',
-    description: 'Another project. What problem did you solve? What did you learn?',
-    tags: ['Python', 'CLI'],
-    repo: 'https://github.com/',
-    live: '',
-    status: 'complete',
-  },
-];
+const projects = await getCollection('projects');
 ---
 
 <BaseLayout title="Projects" description="Things I've built.">
@@ -30,36 +14,38 @@ const projects = [
       {projects.map(project => (
         <div class="card group">
           <div class="flex items-start justify-between gap-4 mb-3">
-            <h2 class="font-display text-xl font-semibold t-text group-hover-accent transition-colors">
-              {project.title}
-            </h2>
+            <a href={`/projects/${project.id.split('/').pop()?.replace(/\.md$/, '')}`}>
+              <h2 class="font-display text-xl font-semibold t-text group-hover-accent transition-colors">
+                {project.data.title}
+              </h2>
+            </a>
             <span class={`font-mono text-xs px-2 py-1 rounded-full border ${
-              project.status === 'active' ? 't-accent b-accent' : 't-muted b-border'
+              project.data.status === 'active' ? 't-accent b-accent' : 't-muted b-border'
             }`}>
-              {project.status}
+              {project.data.status}
             </span>
           </div>
 
           <p class="t-muted text-sm leading-relaxed mb-5">
-            {project.description}
+            {project.data.description}
           </p>
 
           <div class="flex items-center justify-between">
             <div class="flex flex-wrap gap-2">
-              {project.tags.map(tag => (
-                <span class="font-mono text-xs t-muted b-border border px-2 py-1 rounded">
+              {project.data.tags.map(tag => (
+                <span class="whitespace-nowrap font-mono text-xs t-muted b-border border px-2 py-1 rounded">
                   {tag}
                 </span>
               ))}
             </div>
             <div class="flex gap-3 text-sm font-mono">
-              {project.repo && (
-                <a href={project.repo} target="_blank" rel="noopener" class="t-muted hover-accent transition-colors">
+              {project.data.repo && (
+                <a href={project.data.repo} target="_blank" rel="noopener" class="t-muted hover-accent transition-colors">
                   repo ↗
                 </a>
               )}
-              {project.live && (
-                <a href={project.live} target="_blank" rel="noopener" class="t-muted hover-accent transition-colors">
+              {project.data.live && (
+                <a href={project.data.live} target="_blank" rel="noopener" class="t-muted hover-accent transition-colors">
                   live ↗
                 </a>
               )}
