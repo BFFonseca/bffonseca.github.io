@@ -1,0 +1,53 @@
+---
+title: 'Home Server'
+description: 'A Home Serve to run local LLMs, an AI harness and some other services. Maybe some videogame serves.'
+tags: ['Hardware', 'AI', 'SelfHost', ]
+repo: ''
+live: ''
+status: 'active'
+relatedTag: 'project-home-server'
+---
+Details about Project.
+
+## The Problem
+
+I've wanted to self host stuff for quite some time. It's one of the reasons I started this website. I want to actually own stuff, set it up, know how it works, figure out what's wrong with it and fix it.
+
+Ever since learning about AI Harnesses a few months ago, I've been interested in them. They seem like a really powerfull tool. The more I thought about it, the more sense it made to host one in a 24/7 server that I could access any time from any of my machines (PC, laptop or raspberry).
+
+I initially thought about hosting this in an old RaspberryPi 3B+ or in my current mini-server RaspberryPi 4B. But this would be running very tight and with not much room for anything else. Worse yet, it would probably trottle my home network because of the Pihole's DNS running on it. We really don't want that.
+
+## The Solution
+
+I've considered buying a mini-pc and going from there, but the price really put me off. I don't really have 400-700€ spare right now for a "silly little project" that I would probably not take full advantage of.
+
+Fast forward to now, and I've got some really great spare PC parts lying around from my recent desktop upgrade plus some other older PCs.
+
+So, right now all I'm missing is a case, a CPU cooler and some storage. Maybe some more RAM. From what I've researched, I'm looking at maybe 100-200€ investment for a beefy server that will take care of everything I want and then some!
+
+## Setup
+
+Here's what the (planed) setup:
+
+| Component   | Planned                               | Status                            |
+| ----------- | ------------------------------------- | --------------------------------- |
+| Motherboard | MSI MPG B550 Gaming Plus (AM4)        | Spare part. Might look for mITX   |
+| CPU         | AMD Ryzen 5 5600X                     | Spare part                        |
+| CPU Cooler  | Thermalright Peerless Assassin 120 SE | **Looking for**. Might get a low profile for an mITX build |
+| GPU         | MSI Radeon RX 580 Armor 8GB OC        | Spare part                        |
+| RAM         | G.Skill Aegis DDR4-3200 CL16 2×8GB    | Spare part. Might upgrade to 16GB |
+| PSU         | OCZ700MXSP 700W                       | Spare part                        |
+| Storage     | NVMe for OS + services (256GB)        | **Looking for**                       |
+| Case        | CoolerMaster Q500L                    | **Looking for**. Might look for mITX  |
+| OS          | Ubuntu Server 24.04 LTS               | Waiting for HW build              |
+
+
+## Current State
+
+Looking for an ATX case and a CPU cooler. 
+
+I may go for an mITX or mATX build if I can find a motherboard + case for cheap in 2nd-hand markets.
+
+## What's Next
+
+Build the hardware and make sure it runs. Then install a server OS and set it up for what I want.
