@@ -17,7 +17,7 @@ relatedTag: 'project-template'
 Old desktop PSU stopped working. At first only very sporadically, then constantly. Until I decided it wasn't safe to keep using and pulled it out. 
 
 <p align="center">
-  <img src="https://github.com/BFFonseca/bffonseca.github.io/tree/main/src/content/projects/psu-repair/media/1784585164185.png" alt="Burnt PSU PCB" />
+  <img src="https://raw.githubusercontent.com/BFFonseca/bffonseca.github.io/refs/heads/main/src/content/projects/psu-repair/media/1784585164185.png" alt="Burnt PSU PCB" />
 </p>
 
 ## The Solution
