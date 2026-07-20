@@ -79,3 +79,27 @@
 .b-border  { border-color: var(--border); }
 .hover-accent:hover { color: var(--accent); }
 .group:hover .group-hover-accent { color: var(--accent); }
+
+/* Markdown / prose table styling */
+.prose-content table {
+  border-collapse: collapse;
+  width: 100%;
+  margin-bottom: 1rem;
+}
+
+.prose-content th,
+.prose-content td {
+  border: 1px solid var(--border);
+  padding: 0.5rem 0.75rem;
+  text-align: left;
+}
+
+.prose-content thead th {
+  font-weight: 700;
+  background-color: rgba(255,255,255,0.02);
+}
+
+/* Make header background slightly different in light theme */
+:root.light .prose-content thead th {
+  background-color: rgba(0,0,0,0.03);
+}
