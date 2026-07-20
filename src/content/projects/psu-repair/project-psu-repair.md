@@ -6,7 +6,7 @@ repo: ''
 live: ''
 start date: '2026-07-08'
 end date: '-'
-status: 'on-hold'
+status: 'paused'
 relatedTag: 'project-template'
 ---
 

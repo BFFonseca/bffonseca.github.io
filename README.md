@@ -75,7 +75,7 @@ public/
   tags:        string[]     // optional
   repo:        string       // optional – GitHub URL
   live:        string       // optional – live URL
-  status:      'planned' | 'active' | 'complete'
+  status:      'planned' | 'active' | 'paused' | 'complete'
   relatedTag:  string       // optional – links to blog posts with this tag
 }
 ```

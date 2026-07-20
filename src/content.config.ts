@@ -20,7 +20,7 @@ const projects = defineCollection({
     tags:        z.array(z.string()).optional().default([]),
     repo:        z.string().optional(),
     live:        z.string().optional(),
-    status:      z.enum(['planned', 'active', 'complete']).default('planned'),
+    status:      z.enum(['planned', 'active', 'paused', 'complete']).default('planned'),
     relatedTag:  z.string().optional(),
   }),
 });
