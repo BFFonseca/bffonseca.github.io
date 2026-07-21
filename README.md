@@ -2,7 +2,7 @@
 
 Personal website — about, projects, and blog. Built with [Astro](https://astro.build) and [Tailwind CSS](https://tailwindcss.com), deployed automatically to GitHub Pages.
 
-Live at **[debugled.dev](https://debugled.dev)**
+Live at **[debugled.com](https://www.debugled.com)**
 
 ## Stack
 
@@ -88,4 +88,4 @@ Pushes to `main` trigger the GitHub Actions workflow (`.github/workflows/deploy.
 
 ---
 
-> This page and most of the files in this repository have been created by or with the help of AI. More precisely by Anthropic's Claude using the Sonnet 4.6 Extended model.
+> This page and most of the files in this repository have been created by or with the help of AI. More precisely by Anthropic's Claude using the Sonnet 4.6 Extended, Sonnet 5, Opus 4.8 and Fable 5 models.

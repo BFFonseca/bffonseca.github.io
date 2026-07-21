@@ -7,7 +7,7 @@ live: ''
 start date: '2026-07-08'
 end date: '-'
 status: 'paused'
-relatedTag: 'project-template'
+relatedTag: 'project-psu-repair'
 ---
 
 
