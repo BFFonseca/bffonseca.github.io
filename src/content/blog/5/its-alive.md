@@ -11,7 +11,7 @@ draft: false
 ### It's official! The [debugled.com](www.debugled.com) website is up and running!!
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/BFFonseca/bffonseca.github.io/refs/heads/main/src/content/blog/its-alive/media/1784650383489.png" alt="Celebration dance" />
+  <img src="https://raw.githubusercontent.com/BFFonseca/bffonseca.github.io/refs/heads/main/src/content/blog/5/media/1784650383489.gif" alt="Celebration dance" />
 </p>
 
 It's been a few months cooking, but it's finally time to (soft) launch this website!
