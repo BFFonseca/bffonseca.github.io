@@ -57,8 +57,6 @@ I have a few projects that are ongoing and others that are complete. For now wha
 
 My other goal is to be more active in blog posts. Not just about projects, but tech and life in general.
 
-Further down the line, once I have some more content and a "finalized" structure to the website, I'll get a domain and set it up like a proper website. For now it lives in my github page :)
-
 # Project Timeline
 
 Since I'll be updating the website indefinitelly, this project will be active... forever I guess?
