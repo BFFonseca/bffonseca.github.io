@@ -5,10 +5,14 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 <BaseLayout title="Home">
   <!-- Hero -->
   <section class="mb-20">
-    <h1 class="font-display text-5xl font-bold t-text leading-tight mb-5">
-      Welcome to <span class="t-accent">DebugLED</span>.<br />
-      The most important component.
+  <hgroup class="mb-10">
+    <h1 class="font-display text-5xl font-bold t-text leading-tight mb-2">
+      Welcome to <span class="t-accent">DebugLED</span>
     </h1>
+    <p class="font-display text-3xl font-bold t-text leading-snug">
+      The most critical component.
+    </p>
+  </hgroup>
     <p class="t-muted text-lg leading-relaxed mb-8">
       Developer, maker, and occasional writer. This is where I document my
       projects, share what I learn, and keep an online presence that isn't
@@ -29,12 +33,11 @@ import BaseLayout from "../layouts/BaseLayout.astro";
         My name's Bruno and I love to build things and watch cool stuff happen!
       </p>
       <p class="t-muted leading-relaxed">
-        Currently working on: <span class="t-text">this website!</span><br />
-        Yes, this website is my currently on-going project.<br />
-        Find out more on my first blog post: <a
-          href="/blog/hello-debugled"
-          class="t-accent hover:underline">Hello DebugLED</a
-        >
+        Currently working on: <span class="t-text">a Linux Server</span><br />
+        I had some PC spare parts lying around and have been thinking of having my own little server for a while.<br />
+        Find out more on <a
+          href="/projects/project-home-server"
+          class="t-accent hover:underline">the project page</a>.
       </p>
     </div>
   </section>
@@ -50,8 +53,10 @@ import BaseLayout from "../layouts/BaseLayout.astro";
           "C++",
           "Python",
           "Git",
-          "VSCode",
           "bash",
+          "VSCode",
+          "ESP-IDF",
+          "STM32CubeIDE",
           "Antigravity IDE",
           "Claude",
           "ChatGPT",
@@ -59,6 +64,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
           "Autodesk Fusion",
           "KiCad",
           "HomeAssistant",
+          "DaVinci Resolve",
           "Godot Engine",
         ].map((skill) => (
           <span class="skill-tag font-mono text-xs px-3 py-1.5 rounded-full border t-muted b-border hover-accent transition-colors">

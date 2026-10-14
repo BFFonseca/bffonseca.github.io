@@ -4,7 +4,7 @@ description: 'A Home Serve to run local LLMs, an AI harness and some other servi
 tags: ['Hardware', 'AI', 'Self-Host', ]
 start date: '2026-06-25'
 end date: '-'
-status: 'active'
+status: 'paused'
 relatedTag: 'project-home-server'
 ---
 ## Why do I do this to myself?
@@ -41,26 +41,24 @@ Here's what I'm planning right now for the server:
 | ----------- | ------------------------------------- | ------------------------------------------------------------------- |
 | Motherboard | MSI MPG B550 Gaming Plus (AM4)        | ✅ Spare part - Might look for mITX                                 |
 | CPU         | AMD Ryzen 5 5600X                     | ✅ Spare part                                                       |
-| CPU Cooler  | Thermalright Peerless Assassin 120 SE | 🔎**Looking for** - Might get a low profile for an mITX build |
+| CPU Cooler  | Thermalright Peerless Assassin 120 SE | ✅ Got it. Waiting case for install |
 | GPU         | MSI Radeon RX 580 Armor 8GB OC        | ✅ Spare part                                                       |
-| RAM         | G.Skill Aegis DDR4-3200 CL16 2×8GB   | ✅ Spare part - Might upgrade to 16GB                               |
+| RAM         | G.Skill Aegis DDR4-3200 CL16 2×8GB    | ✅ Spare part - ~~Might upgrade to 16GB~~                               |
 | PSU         | OCZ700MXSP 700W                       | ✅ Spare part                                                       |
-| Storage     | NVMe for OS + services (256GB)        | 🔎**Looking for**                                             |
-| Case        | CoolerMaster Q500L                    | 🔎**Looking for** - Might look for mITX                       |
+| Storage     | NVMe for OS + services (256GB)        | ✅ I have a "spare" 512Gb M.2 NVMe in my Desktop that I freed up |
+| Case        | CoolerMaster Q500L                    | 🔜 Got one 2nd hand, waiting for it to arrive                     |
 | OS          | Ubuntu Server 24.04 LTS               | ⏸️ Waiting for HW build                                           |
 
 This is an already very beefy setup, with minimal investment. A very big step-up from a mini computer in terms of specs. 
 
-I'm just not very sold on the size. Hence the consideration of mATX or mITX. Not sure if it'll be worth the price mark-up though. Depends on what I can find and bargain for.
+Not wanting to spend much on this project, I ended up going with the parts I had and just got the smallest ATX case I could find.
+
+I would love to upgrade this to 16Gb RAM but *have you seen memory prices lately?!* It's insane. Maybe in a couple years or so.
 
 ## Current State    
 
-Looking for an ATX case and a CPU cooler.
-
-I may go for an mITX or mATX build if I can find a motherboard + case for cheap in 2nd-hand markets.
+Waiting for the 2nd-hand case to arrive so I can assemble it.
 
 ## What's Next
-
-After I get the case (and the motherboard, maybe?) from a 2nd hand market, buy the CPU cooler, and  the storage.
 
 Build the hardware and make sure it runs. Then install a server OS and set it up for what I want.

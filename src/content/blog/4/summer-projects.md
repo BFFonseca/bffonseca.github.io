@@ -2,7 +2,7 @@
 title: 'Summer Projects'
 description: "A lot's been happening this summer"
 date: '2026-07-20'
-tags: ['update', 'hardware']
+tags: ['update', 'hardware', 'project-switch-review', 'project-home-server', 'project-psu-repair']
 draft: false
 ---
 

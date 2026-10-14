@@ -21,6 +21,7 @@
     --text:    #F3F4F6;
     --muted:   #6B7280;
     --accent:  #00FF94;
+    --done:    #F3F4F6;
     --border:  #1f2937;
   }
 
@@ -30,6 +31,7 @@
     --text:    #0f172a;
     --muted:   #64748b;
     --accent:  #059669;
+    --done:    #0f172a;
     --border:  #e2e8f0;
   }
 
@@ -73,9 +75,11 @@
 .t-text    { color: var(--text); }
 .t-muted   { color: var(--muted); }
 .t-accent  { color: var(--accent); }
+.t-done    { color: var(--done); }
 .t-bg      { background-color: var(--bg); }
 .t-surface { background-color: var(--surface); }
 .b-accent  { border-color: var(--accent); }
+.b-done    { border-color: var(--done); }
 .b-border  { border-color: var(--border); }
 .hover-accent:hover { color: var(--accent); }
 .group:hover .group-hover-accent { color: var(--accent); }
