@@ -49,6 +49,7 @@ Yeah... so... It kinda exploded 😀
 <p align="center">
   <img src="https://raw.githubusercontent.com/BFFonseca/bffonseca.github.io/refs/heads/main/src/content/blog/7/media/psu-short.gif" alt="PSU shorts and sparks fly" />
 </p>
+
 That scared the shit out of me. *It was loud as hell!*
 You can't hear it, but if you've experienced this before you know what I'm talking about. 
 
