@@ -37,7 +37,12 @@ If you want to know how I ended up doing this *with no experience*, check out [t
 
 ## Process
 
-[ W I P ]
+I started out by getting some b-roll to test the video setup. I setup my old tripod with a phone holder attachment thingy so I could mount my Samsung S25. It's not a video camera, but the sensor and lenses on this model are quite good. I also tried with my old Canon EOS 750D but it only shoots 1080p30, so I stuck with my S25. I went with the video + voice over approach since the only microphone I have is my desk mounted Krom Kapsule, connected to my desktop.
+
+With no filmmaking experience and only a phone, I kept the plan simple: voiceover on top of B-roll instead of talking to the camera. Fewer takes, easier editing, and a good excuse to put my new mic to work. I wrote the script first, then shot everything on a Samsung S25 on a tripod, with a keytester in frame during the sound tests so you can see which switch you're hearing. The U1 goes up against two switches I know well: the CS Crystal Silver that came before it, and the Akko Rosewoods I type on every day on my MonsGeek M1 V5.
+
+Audio took far more time than I expected. I recorded the voiceover and sound tests on a Krom Kapsule in Audacity, and Windows did not make it easy. The mic is locked at 96 kHz, and playback through my headset only worked after I switched Audacity's audio host to MME. The sound tests got no noise reduction at all, since it removes the high-frequency detail that tells one switch from another. I edited in DaVinci Resolve (the free version), and the script kept changing along the way. The unboxing turned into B-roll, the installation section got cut, and a Pros & Cons segment appeared once I noticed the U1 stems grip keycaps much tighter than any other switch I own.
+
 
 ## Results
 

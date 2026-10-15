@@ -4,7 +4,7 @@ description: 'This Website! Dedicated to my projects and some thoughts that cros
 tags: ['TypeScript', 'CSS', 'Astro', 'Claude']
 repo: 'https://github.com/BFFonseca/bffonseca.github.io'
 live: ''
-status: 'active'
+status: 'live'
 relatedTag: 'project-debugled'
 ---
 # Start with why
