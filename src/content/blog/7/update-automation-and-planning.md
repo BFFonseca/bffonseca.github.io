@@ -47,7 +47,7 @@ So the website got a few small upgrades meanwhile. Resized some fonts, updated s
 ### PSU Repair
 Yeah... so... It kinda exploded 😀
 <p align="center">
-  <img src="https://raw.githubusercontent.com/BFFonseca/bffonseca.github.io/refs/heads/main/src/content/blog/7/media/psu-short.gif" alt="PSU shorts and sparks fly" />
+  <img src="https://raw.githubusercontent.com/BFFonseca/bffonseca.github.io/refs/heads/main/src/content/blog/7/media/psu_short.gif" alt="PSU shorts and sparks fly" />
 </p>
 
 I soldered a track that was seemingly melted/burned due to over time exposure to heat. It looked like it was supposed to be shorted, so I did. Well... You probably guessed it by now, it shouldn't have been shorted. In fact I'm starting to believe it either shouldn't be shorted or something else is causing a very high current there.
