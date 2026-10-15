@@ -8,9 +8,10 @@ on:
   workflow_dispatch:
 
 concurrency:
-  # Separate queue per branch/PR, so a PR run can never cancel a live deploy
+  # Separate queue per branch/PR, so a PR run can never cancel a live deploy.
+  # PRs: cancel superseded runs. main: never cancel an in-progress deploy.
   group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   build:
@@ -51,4 +52,4 @@ jobs:
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v7 
+        uses: actions/deploy-pages@v5
