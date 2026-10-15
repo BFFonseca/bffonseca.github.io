@@ -35,7 +35,7 @@ Meanwhile my friend had already decided and bought a Sony a6400 kit with 2 lense
 
 I, on the other hand, was stuck on versus.com and Youtube comparing 7 different cameras and their lenses! After a lot of spec comparison and budget considerations I ended up deciding I **needed** (*fine*, wanted 🙄) a Sony a6700. With a Sigma 18-50 f/2.8 because the kit lens isn't enough for what I'm used to anymore.
 
-For context, the Canon has a 50mm f/1.8 prime living on it. I've probably swapped it out for the kit lens 2 or 3 times since I got it. I'm so used to that amazing bohke and low light capability of the f/1.8 that the Sony 16-50 f/3.5-5.6 wasn't really cutting it for me. And I was already aware of this even before buying the Sony camera. So one more thing I was looking for was a second-hand Sigma 18-50 f/2.8 lens.
+For context, the Canon has a 50mm f/1.8 prime living on it. I've probably swapped it out for the kit lens 2 or 3 times since I got it. I'm so used to that amazing bohke and low light capability of the f/1.8 that the Sony 16-50 f/3.5-5.6 wasn't really cutting it for me. And I was already aware of tzhis even before buying the Sony camera. So one more thing I was looking for was a second-hand Sigma 18-50 f/2.8 lens.
 
 After months of searching for used a6700 and the 18-50, I gave up. All the used were either priced very close to a new one, or people just didn't answer. I ended up getting a new Sony a6700 with a 20% discount in a national store (good for warranty) and a new Sigma 18-50 in a website that sells from the Asia market, since the warranty here wouldn't matter as much as for the body.
 
@@ -47,12 +47,12 @@ So the website got a few small upgrades meanwhile. Resized some fonts, updated s
 ### PSU Repair
 Yeah... so... It kinda exploded 😀
 <p align="center">
-  <img src="https://raw.githubusercontent.com/BFFonseca/bffonseca.github.io/refs/heads/main/src/content/blog/7/media/psu_short.gif" alt="PSU shorts and sparks fly" />
+  <img src="https://raw.githubusercontent.com/BFFonseca/bffonseca.github.io/refs/heads/main/src/content/blog/7/media/psu-short.gif" alt="PSU shorts and sparks fly" />
 </p>
 
 I soldered a track that was seemingly melted/burned due to over time exposure to heat. It looked like it was supposed to be shorted, so I did. Well... You probably guessed it by now, it shouldn't have been shorted. In fact I'm starting to believe it either shouldn't be shorted or something else is causing a very high current there.
 <p align="center">
-  <img src="https://raw.githubusercontent.com/BFFonseca/bffonseca.github.io/refs/heads/main/src/content/blog/7/media/psu_short_after_repair_1.png" alt="PSU shorted circuit" />
+  <img src="https://raw.githubusercontent.com/BFFonseca/bffonseca.github.io/refs/heads/main/src/content/blog/7/media/psu-short-after-repair.png" alt="PSU shorted circuit" />
 </p>
 
 For now I'm putting this on hold since I don't really need that PSU and I've remembered why I don't like AC and high voltages 😌
