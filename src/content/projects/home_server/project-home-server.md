@@ -4,7 +4,7 @@ description: 'A Home Serve to run local LLMs, an AI harness and some other servi
 tags: ['Hardware', 'AI', 'Self-Host', ]
 start date: '2026-06-25'
 end date: '-'
-status: 'paused'
+status: 'live'
 relatedTag: 'project-home-server'
 ---
 ## Why do I do this to myself?
@@ -46,8 +46,8 @@ Here's what I'm planning right now for the server:
 | RAM         | G.Skill Aegis DDR4-3200 CL16 2×8GB    | ✅ Spare part - ~~Might upgrade to 16GB~~                               |
 | PSU         | OCZ700MXSP 700W                       | ✅ Spare part                                                       |
 | Storage     | NVMe for OS + services (256GB)        | ✅ I have a "spare" 512Gb M.2 NVMe in my Desktop that I freed up |
-| Case        | CoolerMaster Q500L                    | 🔜 Got one 2nd hand, waiting for it to arrive                     |
-| OS          | Ubuntu Server 24.04 LTS               | ⏸️ Waiting for HW build                                           |
+| Case        | CoolerMaster Q500L                    | ✅ Bought 2nd hand, mostly new                     |
+| OS          | Ubuntu Server 26.04.1 LTS            | ✅ Installed and running with a ZFS root                                         |
 
 This is an already very beefy setup, with minimal investment. A very big step-up from a mini computer in terms of specs. 
 
@@ -55,10 +55,22 @@ Not wanting to spend much on this project, I ended up going with the parts I had
 
 I would love to upgrade this to 16Gb RAM but *have you seen memory prices lately?!* It's insane. Maybe in a couple years or so.
 
-## Current State    
-
-Waiting for the 2nd-hand case to arrive so I can assemble it.
+## Current State
+The server is assembled and running! So far, this is what's done:
+- Installed Ubuntu Server 26.04.1 (autoinstall, ZFS root on the SN750); SSH key auth, static IP via DHCP reservation
+- First `apt upgrade` after a pre-upgrade snapshot
+- Short power-button press ignored via logind drop-in to prevent misclick shutdowns
+- `presnap` script for recursive root + boot snapshots
+- Fixed hidden journal (flush waits for `zfs-mount`)
+- Rehearsed offline rollback from Ventoy live ISO ✔
+- Built headless recovery: dracut-sshd in initramfs + `recovery-reboot` (kexec) + `zrollback`; full SSH rollback rehearsed ✔
+- Wrote the recovery runbook
+- Configured Claude Code to run auto in a safe(ish) mode
+- llama.cpp (Vulkan) as localhost systemd service; Qwen3-4B-Instruct-2507 + Qwen3-8B
 
 ## What's Next
-
-Build the hardware and make sure it runs. Then install a server OS and set it up for what I want.
+ - Repaste GPU and maybe get better case fans
+ - Finish configuring Hermes to run both llama models and Claude Code
+ - Install Tailscale for remote access
+ - ZFS ARC cap so the server doesn't run OOM
+ - ZFS `copies=2` so there's some sort of fallback for a bad sector

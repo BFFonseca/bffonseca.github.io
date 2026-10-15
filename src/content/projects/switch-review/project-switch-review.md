@@ -37,7 +37,16 @@ If you want to know how I ended up doing this *with no experience*, check out [t
 
 ## Process
 
-[ W I P ]
+I started out by getting some b-roll to test the video setup. I setup my old tripod with a phone holder attachment thingy so I could mount my Samsung S25. It's not a video camera, but the sensor and lenses on this model are quite good. I also tried with my old Canon EOS 750D but it only shoots 1080p30, so I stuck with my S25. I went with the video + voice over approach since the only microphone I have is my desk mounted Krom Kapsule, connected to my desktop.
+
+I asked Claude to help me write a script template and then I edited it to make it more me. Shot the keytests for the 3 switches I compared (Rosewood, CS Silver and CS Silver U1). Video with the S25 and Audio with the desk mic, all synced in post.
+
+Audacity was a bit annoying to setup. The mic frequency was wrong and I got no audio feedback a the start. After troubleshooting and a few settings changed it was all working. Even then, I had to re-record the voiceover audio more than I'd expect or like, but it came out better than the first few tries. So that was worth it.
+
+Then came the editing. With no experience it was challenging, but with a few tutorials and trying things by myself, I managed. At the start it was a bit messy, I had no idea how to organize all the clips, audio, transitions, effects and other components in the timeline. Then I started to get the hang of it and started sectioning off the video into several parts. I would then finish one part before moving on to the next so I at least had a consistent storyline to work with.
+
+After that came the publishing and sharing it with Akko. They were very supportive and said they really like the video. The video didn't really perform that well, but with no organic following, that's only normal.
+
 
 ## Results
 
@@ -49,7 +58,9 @@ It's a bit rough around the edges, but it was my first try. I have to say I'm ha
 
 ## Retrospective
 
-I've definitely learned a lot about shooting video, video editing and the process of creating content.
+I've definitely learned a lot about shooting video, video editing and the process of creating content. It's hard work and I have a new found appreciation for those that make this their job. 
+
+I was also, honestly expecting a bit more reach. But as a first video, it wasn't too bad.
 
 Looking back, I'd do it again. It was fun (most of the time).
 
