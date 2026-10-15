@@ -50,6 +50,9 @@ Yeah... so... It kinda exploded 😀
   <img src="https://raw.githubusercontent.com/BFFonseca/bffonseca.github.io/refs/heads/main/src/content/blog/7/media/psu-short.gif" alt="PSU shorts and sparks fly" />
 </p>
 
+That scared the shit out of me. *It was loud as hell!*
+You can't hear it, but if you've experienced this before you know what I'm talking about. 
+
 I soldered a track that was seemingly melted/burned due to over time exposure to heat. It looked like it was supposed to be shorted, so I did. Well... You probably guessed it by now, it shouldn't have been shorted. In fact I'm starting to believe it either shouldn't be shorted or something else is causing a very high current there.
 <p align="center">
   <img src="https://raw.githubusercontent.com/BFFonseca/bffonseca.github.io/refs/heads/main/src/content/blog/7/media/psu-short-after-repair.png" alt="PSU shorted circuit" />
