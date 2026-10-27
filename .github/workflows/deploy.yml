@@ -28,10 +28,16 @@ jobs:
           cache: npm
 
       - name: Install dependencies
-        run: npm install
+        run: npm ci
+
+      - name: Type check
+        run: npm run check
 
       - name: Build
         run: npm run build
+
+      - name: Check internal links
+        run: npm run check:links
 
       - name: Upload artifact
         if: github.event_name != 'pull_request'
