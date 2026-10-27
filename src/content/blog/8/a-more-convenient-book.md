@@ -113,7 +113,7 @@ I immediately when searching for it. I ended up buying one without battery becau
 A few weeks after, I got the board. I boot it up through USB and flashed it with a nice [english fork of the original Waveshare repo](https://github.com/hudsonrj/esp32-s3-e-papper). It works great. I also [3d printed the bottom of a housing](https://makerworld.com/en/models/3180226-folloup#profileId-3596844) for a test fit. Since it doesn't have a battery, it has just been sitting on my desk as a clock while I wait for a battery to fully assemble it.
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/BFFonseca/bffonseca.github.io/refs/heads/main/src/content/blog/<number>/media/epaper-clock.jpg" alt="Waveshare ESP32-S3 epaper in clock mode" />
+  <img src="https://raw.githubusercontent.com/BFFonseca/bffonseca.github.io/refs/heads/main/src/content/blog/8/media/epaper-clock.jpg" alt="Waveshare ESP32-S3 epaper in clock mode" />
 </p>
 
 And this is where I'm stuck at a crossroads. This 3d print is designed for the battery that this board usually comes with. This battery is very *very* specific and hard to find. It's a 1500mAh Li-Po with the model number 454261 and a 2pin JST connector. The connector part is a bit irrelevant since I can just buy a loose one and crimp it myself. The hard part is the battery and it's very specific dimensions, 4.5 x 42 x 61 mm3. 
