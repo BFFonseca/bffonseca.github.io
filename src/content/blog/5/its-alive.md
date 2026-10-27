@@ -8,7 +8,7 @@ draft: false
 
 ## It's alive!!
 
-### It's official! The [debugled.com](www.debugled.com) website is up and running!!
+### It's official! The [debugled.com](https://www.debugled.com) website is up and running!!
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/BFFonseca/bffonseca.github.io/refs/heads/main/src/content/blog/5/media/1784650383489.gif" alt="Celebration dance" />

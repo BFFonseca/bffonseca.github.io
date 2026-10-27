@@ -64,4 +64,4 @@ I was also, honestly expecting a bit more reach. But as a first video, it wasn't
 
 Looking back, I'd do it again. It was fun (most of the time).
 
-Check out more of my take-aways from this project in [this blog post](/blog/switch-review-done)
+Check out more of my take-aways from this project in [this blog post](/blog/the-end-is-here)
