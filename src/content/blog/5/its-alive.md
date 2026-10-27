@@ -1,5 +1,5 @@
 ---
-title: "It's alive! ⚡"
+title: "It's Alive! ⚡"
 description: 'The time as come! We are going live!'
 date: '2026-07-21'
 tags: ['website', 'software', 'milestone', 'project-debugled']
