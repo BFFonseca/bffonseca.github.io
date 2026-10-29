@@ -44,7 +44,7 @@ const slides = (
         {slides.map((slide, i) => (
           <a
             href={slide.href}
-            class="carousel-slide card group block"
+            class="carousel-slide card group flex flex-col"
             aria-roledescription="slide"
             aria-label={`${i + 1} of ${slides.length}`}
           >
@@ -56,20 +56,30 @@ const slides = (
                 {slide.meta}
               </span>
             </div>
-            <p class="t-muted text-sm leading-relaxed mb-4">{slide.description}</p>
-            <div class="flex flex-wrap gap-2">
+            <p class="carousel-desc t-muted text-sm leading-relaxed mb-4" title={slide.description}>
+              {slide.description}
+            </p>
+            <div class="carousel-tags flex gap-2 mt-auto" data-tags>
               {slide.tags.map((tag) => (
                 <span class="whitespace-nowrap font-mono text-xs t-muted b-border border px-2 py-1 rounded">
                   {tag}
                 </span>
               ))}
+              <span
+                class="whitespace-nowrap font-mono text-xs t-muted b-border border px-2 py-1 rounded"
+                data-more
+                hidden
+                aria-label="more tags"
+              >
+                ...
+              </span>
             </div>
           </a>
         ))}
       </div>
 
       {slides.length > 1 && (
-        <div class="flex items-center justify-between mt-4">
+        <div class="flex items-center justify-between mt-4" data-nav>
           <button type="button" class="carousel-btn" data-prev aria-label="Previous slide">
             ←
           </button>
@@ -99,25 +109,65 @@ const slides = (
     const track = root.querySelector<HTMLElement>("[data-track]")!;
     const slides = Array.from(track.children) as HTMLElement[];
     const dots = Array.from(root.querySelectorAll<HTMLButtonElement>("[data-dot]"));
-    if (slides.length < 2) return;
+    const nav = root.querySelector<HTMLElement>("[data-nav]");
+
+    // Show only the tags that fit on one line; if any are cut, the last
+    // visible chip is "..." to say there are more.
+    const fitTags = () => {
+      root.querySelectorAll<HTMLElement>("[data-tags]").forEach((row) => {
+        const tags = Array.from(row.children).filter((t) => !t.hasAttribute("data-more")) as HTMLElement[];
+        const more = row.querySelector<HTMLElement>("[data-more]")!;
+        tags.forEach((t) => (t.hidden = false));
+        more.hidden = true;
+        if (row.scrollWidth <= row.clientWidth) return;
+        more.hidden = false;
+        for (let i = tags.length - 1; i >= 0 && row.scrollWidth > row.clientWidth; i--) {
+          tags[i].hidden = true;
+        }
+      });
+    };
+
+    // The track moves one card at a time. With two cards on screen, the last
+    // position shows the last two cards, so there are (cards - visible + 1) stops.
+    const step = () =>
+      slides.length > 1 ? slides[1].offsetLeft - slides[0].offsetLeft : track.clientWidth;
+    const lastIndex = () =>
+      Math.max(
+        0,
+        slides.length - Math.round((track.clientWidth + step() - slides[0].offsetWidth) / step()),
+      );
 
     let current = 0;
 
     const go = (i: number) => {
-      current = (i + slides.length) % slides.length;
-      track.scrollTo({ left: slides[current].offsetLeft - track.offsetLeft, behavior: "smooth" });
+      const last = lastIndex();
+      current = i > last ? 0 : i < 0 ? last : i;
+      track.scrollTo({ left: current * step(), behavior: "smooth" });
+      markActive();
     };
 
-    const markActive = () => {
+    function markActive() {
       dots.forEach((d, i) => d.setAttribute("aria-current", String(i === current)));
+    }
+
+    const layout = () => {
+      fitTags();
+      const last = lastIndex();
+      if (nav) nav.hidden = last === 0;
+      dots.forEach((d, i) => (d.hidden = i > last));
+      current = Math.min(current, last);
+      markActive();
     };
+    layout();
+    new ResizeObserver(layout).observe(track);
+
+    if (slides.length < 2) return;
 
     // Keep `current` in sync when the user swipes or scrolls the track.
     track.addEventListener(
       "scroll",
       () => {
-        const step = slides[1].offsetLeft - slides[0].offsetLeft;
-        current = Math.round(track.scrollLeft / step);
+        current = Math.min(Math.round(track.scrollLeft / step()), lastIndex());
         markActive();
       },
       { passive: true },
@@ -126,7 +176,6 @@ const slides = (
     root.querySelector("[data-prev]")?.addEventListener("click", () => go(current - 1));
     root.querySelector("[data-next]")?.addEventListener("click", () => go(current + 1));
     dots.forEach((d, i) => d.addEventListener("click", () => go(i)));
-    markActive();
 
     // Autoplay, paused while hovered or focused, and off for reduced motion.
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
@@ -138,7 +187,7 @@ const slides = (
     root.addEventListener("focusin", pause);
     root.addEventListener("focusout", resume);
     setInterval(() => {
-      if (!paused && !document.hidden) go(current + 1);
+      if (!paused && !document.hidden && lastIndex() > 0) go(current + 1);
     }, AUTOPLAY_MS);
   });
 </script>
@@ -154,9 +203,31 @@ const slides = (
   .carousel-track::-webkit-scrollbar {
     display: none;
   }
+  /* One card per view on phones, two side by side from the sm breakpoint. */
   .carousel-slide {
     flex: 0 0 100%;
+    min-width: 0;
     scroll-snap-align: start;
+  }
+  @media (min-width: 640px) {
+    .carousel-slide {
+      flex-basis: calc((100% - 1rem) / 2);
+    }
+  }
+  /* Long descriptions end in "..." after three lines instead of growing the card. */
+  .carousel-desc {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+    overflow: hidden;
+  }
+  .carousel-tags {
+    flex-wrap: nowrap;
+    overflow: hidden;
+  }
+  .carousel-tags > [hidden] {
+    display: none;
   }
   .carousel-btn {
     font-family: var(--font-mono);
