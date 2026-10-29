@@ -33,7 +33,9 @@ After a lot (and I mean **A LOT**) of back-and-forward with Claude discussing po
  - ATX build: I only get a case
  - mATX or mITX: I get a case and a motherboard
 
-Other than that, I only need some storage, a cpu cooler and maybe a RAM upgrade.
+Other than that, I only needed some storage, a cpu cooler and maybe a RAM upgrade.
+
+I ended up getting a 2nd hand small ATX case (CoolerMaster Q500L) and took an NMVe M.2 SSD from my Desktop that wasn't being used.
 
 Here's the spec list for the server right now:
 
@@ -53,7 +55,7 @@ This is an already very beefy setup, with minimal investment. A very big step-up
 
 Not wanting to spend much on this project, I ended up going with the parts I had and just got the smallest ATX case I could find.
 
-I would love to upgrade this to 16Gb RAM but *have you seen memory prices lately?!* It's insane. Maybe in a couple years or so.
+I would love to upgrade this to 16Gb RAM but *have you seen memory prices lately?!* It's insane. Even second hand is expensive (not to mention unreliable). Maybe in a couple years or so.
 
 ## Current State
 The server is assembled and running! So far, this is what's done:
