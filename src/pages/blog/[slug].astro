@@ -1,16 +1,17 @@
 ---
 import { getCollection, render } from "astro:content";
 import BaseLayout from "../../layouts/BaseLayout.astro";
+import Comments from "../../components/Comments.astro";
 
 export async function getStaticPaths() {
   const posts = await getCollection("blog", ({ data }) => !data.draft);
-  return posts.map((post) => ({
-    params: { slug: post.id.split("/").pop()?.replace(/\.md$/, "") },
-    props: { post },
-  }));
+  return posts.map((post) => {
+    const slug = post.id.split("/").pop()!.replace(/\.md$/, "");
+    return { params: { slug }, props: { post, slug } };
+  });
 }
 
-const { post } = Astro.props;
+const { post, slug } = Astro.props;
 const { Content } = await render(post);
 const { title, description, date, tags } = post.data;
 ---
@@ -41,5 +42,7 @@ const { title, description, date, tags } = post.data;
     <div class="prose-content">
       <Content />
     </div>
+
+    <Comments term={slug} />
   </article>
 </BaseLayout>
