@@ -1,0 +1,256 @@
+---
+import { execFileSync } from "node:child_process";
+import { statSync } from "node:fs";
+import { getCollection } from "astro:content";
+
+// Projects have no date field, so "latest updated" is the last git commit
+// that touched the project's Markdown file (falls back to file mtime).
+const lastUpdated = (filePath?: string) => {
+  if (!filePath) return 0;
+  try {
+    const iso = execFileSync("git", ["log", "-1", "--format=%cI", "--", filePath], {
+      encoding: "utf8",
+    }).trim();
+    if (iso) return new Date(iso).getTime();
+  } catch {}
+  try {
+    return statSync(filePath).mtimeMs;
+  } catch {
+    return 0;
+  }
+};
+
+const slugOf = (id: string) => id.split("/").pop()?.replace(/\.md$/, "");
+
+// Only in-progress projects (active or live), most recently updated first.
+const slides = (
+  await getCollection("projects", ({ data }) => ["active", "live"].includes(data.status))
+)
+  .map((p) => ({ entry: p, updated: lastUpdated(p.filePath) }))
+  .sort((a, b) => b.updated - a.updated)
+  .map(({ entry }) => ({
+    href: `/projects/${slugOf(entry.id)}`,
+    title: entry.data.title,
+    description: entry.data.description,
+    meta: entry.data.status,
+    tags: entry.data.tags,
+  }));
+---
+
+{
+  slides.length > 0 && (
+    <div class="carousel" data-carousel aria-roledescription="carousel">
+      <div class="carousel-track" data-track>
+        {slides.map((slide, i) => (
+          <a
+            href={slide.href}
+            class="carousel-slide card group flex flex-col"
+            aria-roledescription="slide"
+            aria-label={`${i + 1} of ${slides.length}`}
+          >
+            <div class="flex items-start justify-between gap-4 mb-2">
+              <h4 class="font-display text-xl font-semibold t-text group-hover-accent transition-colors">
+                {slide.title}
+              </h4>
+              <span class="font-mono text-xs px-2 py-1 rounded-full border t-accent b-accent shrink-0">
+                {slide.meta}
+              </span>
+            </div>
+            <p class="carousel-desc t-muted text-sm leading-relaxed mb-4" title={slide.description}>
+              {slide.description}
+            </p>
+            <div class="carousel-tags flex gap-2 mt-auto" data-tags>
+              {slide.tags.map((tag) => (
+                <span class="whitespace-nowrap font-mono text-xs t-muted b-border border px-2 py-1 rounded">
+                  {tag}
+                </span>
+              ))}
+              <span
+                class="whitespace-nowrap font-mono text-xs t-muted b-border border px-2 py-1 rounded"
+                data-more
+                hidden
+                aria-label="more tags"
+              >
+                ...
+              </span>
+            </div>
+          </a>
+        ))}
+      </div>
+
+      {slides.length > 1 && (
+        <div class="flex items-center justify-between mt-4" data-nav>
+          <button type="button" class="carousel-btn" data-prev aria-label="Previous slide">
+            ←
+          </button>
+          <div class="flex gap-2">
+            {slides.map((_, i) => (
+              <button
+                type="button"
+                class="carousel-dot"
+                data-dot={i}
+                aria-label={`Go to slide ${i + 1}`}
+              />
+            ))}
+          </div>
+          <button type="button" class="carousel-btn" data-next aria-label="Next slide">
+            →
+          </button>
+        </div>
+      )}
+    </div>
+  )
+}
+
+<script>
+  const AUTOPLAY_MS = 7000;
+
+  document.querySelectorAll<HTMLElement>("[data-carousel]").forEach((root) => {
+    const track = root.querySelector<HTMLElement>("[data-track]")!;
+    const slides = Array.from(track.children) as HTMLElement[];
+    const dots = Array.from(root.querySelectorAll<HTMLButtonElement>("[data-dot]"));
+    const nav = root.querySelector<HTMLElement>("[data-nav]");
+
+    // Show only the tags that fit on one line; if any are cut, the last
+    // visible chip is "..." to say there are more.
+    const fitTags = () => {
+      root.querySelectorAll<HTMLElement>("[data-tags]").forEach((row) => {
+        const tags = Array.from(row.children).filter((t) => !t.hasAttribute("data-more")) as HTMLElement[];
+        const more = row.querySelector<HTMLElement>("[data-more]")!;
+        tags.forEach((t) => (t.hidden = false));
+        more.hidden = true;
+        if (row.scrollWidth <= row.clientWidth) return;
+        more.hidden = false;
+        for (let i = tags.length - 1; i >= 0 && row.scrollWidth > row.clientWidth; i--) {
+          tags[i].hidden = true;
+        }
+      });
+    };
+
+    // The track moves one card at a time. With two cards on screen, the last
+    // position shows the last two cards, so there are (cards - visible + 1) stops.
+    const step = () =>
+      slides.length > 1 ? slides[1].offsetLeft - slides[0].offsetLeft : track.clientWidth;
+    const lastIndex = () =>
+      Math.max(
+        0,
+        slides.length - Math.round((track.clientWidth + step() - slides[0].offsetWidth) / step()),
+      );
+
+    let current = 0;
+
+    const go = (i: number) => {
+      const last = lastIndex();
+      current = i > last ? 0 : i < 0 ? last : i;
+      track.scrollTo({ left: current * step(), behavior: "smooth" });
+      markActive();
+    };
+
+    function markActive() {
+      dots.forEach((d, i) => d.setAttribute("aria-current", String(i === current)));
+    }
+
+    const layout = () => {
+      fitTags();
+      const last = lastIndex();
+      if (nav) nav.hidden = last === 0;
+      dots.forEach((d, i) => (d.hidden = i > last));
+      current = Math.min(current, last);
+      markActive();
+    };
+    layout();
+    new ResizeObserver(layout).observe(track);
+
+    if (slides.length < 2) return;
+
+    // Keep `current` in sync when the user swipes or scrolls the track.
+    track.addEventListener(
+      "scroll",
+      () => {
+        current = Math.min(Math.round(track.scrollLeft / step()), lastIndex());
+        markActive();
+      },
+      { passive: true },
+    );
+
+    root.querySelector("[data-prev]")?.addEventListener("click", () => go(current - 1));
+    root.querySelector("[data-next]")?.addEventListener("click", () => go(current + 1));
+    dots.forEach((d, i) => d.addEventListener("click", () => go(i)));
+
+    // Autoplay, paused while hovered or focused, and off for reduced motion.
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    let paused = false;
+    const pause = () => (paused = true);
+    const resume = () => (paused = false);
+    root.addEventListener("mouseenter", pause);
+    root.addEventListener("mouseleave", resume);
+    root.addEventListener("focusin", pause);
+    root.addEventListener("focusout", resume);
+    setInterval(() => {
+      if (!paused && !document.hidden && lastIndex() > 0) go(current + 1);
+    }, AUTOPLAY_MS);
+  });
+</script>
+
+<style>
+  .carousel-track {
+    display: flex;
+    gap: 1rem;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+  }
+  .carousel-track::-webkit-scrollbar {
+    display: none;
+  }
+  /* One card per view on phones, two side by side from the sm breakpoint. */
+  .carousel-slide {
+    flex: 0 0 100%;
+    min-width: 0;
+    scroll-snap-align: start;
+  }
+  @media (min-width: 640px) {
+    .carousel-slide {
+      flex-basis: calc((100% - 1rem) / 2);
+    }
+  }
+  /* Long descriptions end in "..." after three lines instead of growing the card. */
+  .carousel-desc {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+    overflow: hidden;
+  }
+  .carousel-tags {
+    flex-wrap: nowrap;
+    overflow: hidden;
+  }
+  .carousel-tags > [hidden] {
+    display: none;
+  }
+  .carousel-btn {
+    font-family: var(--font-mono);
+    color: var(--muted);
+    border: 1px solid var(--border);
+    border-radius: 0.5rem;
+    padding: 0.25rem 0.75rem;
+    cursor: pointer;
+    transition: color 0.2s, border-color 0.2s;
+  }
+  .carousel-btn:hover {
+    color: var(--accent);
+    border-color: var(--accent);
+  }
+  .carousel-dot {
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 9999px;
+    background-color: var(--border);
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+  .carousel-dot[aria-current="true"] {
+    background-color: var(--accent);
+  }
+</style>
