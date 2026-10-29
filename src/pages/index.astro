@@ -1,6 +1,7 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
-import LatestCarousel from "../components/LatestCarousel.astro";
+import ProjectCarousel from "../components/ProjectCarousel.astro";
+import LatestPost from "../components/LatestPost.astro";
 ---
 
 <BaseLayout title="Home">
@@ -27,8 +28,15 @@ import LatestCarousel from "../components/LatestCarousel.astro";
   <!-- Currently working on -->
   <section class="mb-20">
     <h2 class="section-title">Currently Working On</h2>
-    <p class="led-accent text-sm mb-6">// latest project & blog post</p>
-    <LatestCarousel />
+    <p class="led-accent text-sm mb-8">// what I'm building and writing</p>
+
+    <h3 class="font-display text-xl font-semibold t-text mb-1">Projects</h3>
+    <p class="led-accent text-xs mb-4">// active & live</p>
+    <ProjectCarousel />
+
+    <h3 class="font-display text-xl font-semibold t-text mt-10 mb-1">Blog</h3>
+    <p class="led-accent text-xs mb-4">// latest post</p>
+    <LatestPost />
   </section>
 
   <!-- Skills / Stack -->

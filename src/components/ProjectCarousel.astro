@@ -2,7 +2,6 @@
 import { execFileSync } from "node:child_process";
 import { statSync } from "node:fs";
 import { getCollection } from "astro:content";
-import type { CollectionEntry } from "astro:content";
 
 // Projects have no date field, so "latest updated" is the last git commit
 // that touched the project's Markdown file (falls back to file mtime).
@@ -21,40 +20,21 @@ const lastUpdated = (filePath?: string) => {
   }
 };
 
-const postNumber = (post: CollectionEntry<"blog">) =>
-  Number(post.id.split("/")[0]) || 0;
-
 const slugOf = (id: string) => id.split("/").pop()?.replace(/\.md$/, "");
 
-const projects = (await getCollection("projects"))
+// Only in-progress projects (active or live), most recently updated first.
+const slides = (
+  await getCollection("projects", ({ data }) => ["active", "live"].includes(data.status))
+)
   .map((p) => ({ entry: p, updated: lastUpdated(p.filePath) }))
-  .sort((a, b) => b.updated - a.updated);
-const latestProject = projects[0];
-
-const latestPost = (await getCollection("blog", ({ data }) => !data.draft)).sort(
-  (a, b) =>
-    new Date(b.data.date).getTime() - new Date(a.data.date).getTime() ||
-    postNumber(b) - postNumber(a),
-)[0];
-
-const slides = [
-  latestProject && {
-    label: "// latest project",
-    href: `/projects/${slugOf(latestProject.entry.id)}`,
-    title: latestProject.entry.data.title,
-    description: latestProject.entry.data.description,
-    meta: latestProject.entry.data.status,
-    tags: latestProject.entry.data.tags,
-  },
-  latestPost && {
-    label: "// latest post",
-    href: `/blog/${slugOf(latestPost.id)}`,
-    title: latestPost.data.title,
-    description: latestPost.data.description,
-    meta: latestPost.data.date,
-    tags: latestPost.data.tags,
-  },
-].filter((s): s is NonNullable<typeof s> => Boolean(s));
+  .sort((a, b) => b.updated - a.updated)
+  .map(({ entry }) => ({
+    href: `/projects/${slugOf(entry.id)}`,
+    title: entry.data.title,
+    description: entry.data.description,
+    meta: entry.data.status,
+    tags: entry.data.tags,
+  }));
 ---
 
 {
@@ -69,12 +49,13 @@ const slides = [
             aria-label={`${i + 1} of ${slides.length}`}
           >
             <div class="flex items-start justify-between gap-4 mb-2">
-              <p class="led-accent text-xs">{slide.label}</p>
-              <span class="font-mono text-xs t-muted shrink-0">{slide.meta}</span>
+              <h4 class="font-display text-xl font-semibold t-text group-hover-accent transition-colors">
+                {slide.title}
+              </h4>
+              <span class="font-mono text-xs px-2 py-1 rounded-full border t-accent b-accent shrink-0">
+                {slide.meta}
+              </span>
             </div>
-            <h3 class="font-display text-xl font-semibold t-text group-hover-accent transition-colors mb-2">
-              {slide.title}
-            </h3>
             <p class="t-muted text-sm leading-relaxed mb-4">{slide.description}</p>
             <div class="flex flex-wrap gap-2">
               {slide.tags.map((tag) => (
