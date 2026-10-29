@@ -35,19 +35,19 @@ After a lot (and I mean **A LOT**) of back-and-forward with Claude discussing po
 
 Other than that, I only need some storage, a cpu cooler and maybe a RAM upgrade.
 
-Here's what I'm planning right now for the server:
+Here's the spec list for the server right now:
 
-| Component   | Planned                               | Status                                                              |
-| ----------- | ------------------------------------- | ------------------------------------------------------------------- |
-| Motherboard | MSI MPG B550 Gaming Plus (AM4)        | ✅ Spare part - Might look for mITX                                 |
-| CPU         | AMD Ryzen 5 5600X                     | ✅ Spare part                                                       |
-| CPU Cooler  | Thermalright Peerless Assassin 120 SE | ✅ Got it. Waiting case for install |
-| GPU         | MSI Radeon RX 580 Armor 8GB OC        | ✅ Spare part                                                       |
-| RAM         | G.Skill Aegis DDR4-3200 CL16 2×8GB    | ✅ Spare part - ~~Might upgrade to 16GB~~                               |
-| PSU         | OCZ700MXSP 700W                       | ✅ Spare part                                                       |
-| Storage     | NVMe for OS + services (256GB)        | ✅ I have a "spare" 512Gb M.2 NVMe in my Desktop that I freed up |
-| Case        | CoolerMaster Q500L                    | ✅ Bought 2nd hand, mostly new                     |
-| OS          | Ubuntu Server 26.04.1 LTS            | ✅ Installed and running with a ZFS root                                         |
+| Component   | Part                                  |
+| ----------- | ------------------------------------- |
+| Motherboard | MSI MPG B550 Gaming Plus (AM4)        |
+| CPU         | AMD Ryzen 5 5600X                     |
+| CPU Cooler  | Thermalright Peerless Assassin 120 SE |
+| GPU         | MSI Radeon RX 580 Armor 8GB OC        |
+| RAM         | G.Skill Aegis DDR4-3200 CL16 2×8GB    |
+| PSU         | OCZ700MXSP 700W                       |
+| Storage     | NVMe for OS + services (256GB)        |
+| Case        | CoolerMaster Q500L                    |
+| OS          | Ubuntu Server 26.04.1 LTS             |
 
 This is an already very beefy setup, with minimal investment. A very big step-up from a mini computer in terms of specs. 
 
