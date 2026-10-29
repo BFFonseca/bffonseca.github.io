@@ -3,6 +3,7 @@
 export const comments = {
   enabled: true,
   // Giscus stores comments as GitHub Discussions on this repo. IDs come from https://giscus.app
+  // giscus.json at the repo root lists the only sites allowed to embed these threads.
   repo: 'BFFonseca/bffonseca.github.io',
   repoId: 'R_kgDORnGSpg',
   category: 'Blog comments',
