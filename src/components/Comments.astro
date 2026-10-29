@@ -1,0 +1,66 @@
+---
+import { comments } from '../site.config';
+
+interface Props {
+  // Discussion title on GitHub. Posts use their slug, so renaming a post's file
+  // detaches its comments: rename the discussion to match the new slug to fix it.
+  term: string;
+}
+
+const { term } = Astro.props;
+---
+
+{comments.enabled && (
+  <section class="mt-16 pt-10 border-t b-border">
+    <h2 class="font-display text-2xl font-bold t-text mb-6">Comments</h2>
+    <div
+      id="giscus-container"
+      data-repo={comments.repo}
+      data-repo-id={comments.repoId}
+      data-category={comments.category}
+      data-category-id={comments.categoryId}
+      data-term={term}
+    >
+      <noscript>
+        <p class="font-mono text-sm t-muted">Comments need JavaScript.</p>
+      </noscript>
+    </div>
+  </section>
+)}
+
+<script>
+  const container = document.getElementById('giscus-container');
+
+  // Giscus themes that match the site's dark (default) and light palettes
+  const giscusTheme = () =>
+    document.documentElement.classList.contains('light') ? 'light' : 'transparent_dark';
+
+  if (container) {
+    const { repo, repoId, category, categoryId, term } = container.dataset;
+    const script = document.createElement('script');
+    script.src = 'https://giscus.app/client.js';
+    script.async = true;
+    script.crossOrigin = 'anonymous';
+    Object.entries({
+      repo, repoId, category, categoryId, term,
+      mapping: 'specific',
+      strict: '1',
+      reactionsEnabled: '1',
+      emitMetadata: '0',
+      inputPosition: 'top',
+      theme: giscusTheme(),
+      lang: 'en',
+      loading: 'lazy',
+    }).forEach(([key, value]) => { script.dataset[key] = value; });
+    container.appendChild(script);
+
+    // The theme toggle in Nav flips the `light` class on <html>; follow it inside the iframe
+    new MutationObserver(() => {
+      const iframe = document.querySelector<HTMLIFrameElement>('iframe.giscus-frame');
+      iframe?.contentWindow?.postMessage(
+        { giscus: { setConfig: { theme: giscusTheme() } } },
+        'https://giscus.app',
+      );
+    }).observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+  }
+</script>
