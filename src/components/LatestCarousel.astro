@@ -1,0 +1,204 @@
+---
+import { execFileSync } from "node:child_process";
+import { statSync } from "node:fs";
+import { getCollection } from "astro:content";
+import type { CollectionEntry } from "astro:content";
+
+// Projects have no date field, so "latest updated" is the last git commit
+// that touched the project's Markdown file (falls back to file mtime).
+const lastUpdated = (filePath?: string) => {
+  if (!filePath) return 0;
+  try {
+    const iso = execFileSync("git", ["log", "-1", "--format=%cI", "--", filePath], {
+      encoding: "utf8",
+    }).trim();
+    if (iso) return new Date(iso).getTime();
+  } catch {}
+  try {
+    return statSync(filePath).mtimeMs;
+  } catch {
+    return 0;
+  }
+};
+
+const postNumber = (post: CollectionEntry<"blog">) =>
+  Number(post.id.split("/")[0]) || 0;
+
+const slugOf = (id: string) => id.split("/").pop()?.replace(/\.md$/, "");
+
+const projects = (await getCollection("projects"))
+  .map((p) => ({ entry: p, updated: lastUpdated(p.filePath) }))
+  .sort((a, b) => b.updated - a.updated);
+const latestProject = projects[0];
+
+const latestPost = (await getCollection("blog", ({ data }) => !data.draft)).sort(
+  (a, b) =>
+    new Date(b.data.date).getTime() - new Date(a.data.date).getTime() ||
+    postNumber(b) - postNumber(a),
+)[0];
+
+const slides = [
+  latestProject && {
+    label: "// latest project",
+    href: `/projects/${slugOf(latestProject.entry.id)}`,
+    title: latestProject.entry.data.title,
+    description: latestProject.entry.data.description,
+    meta: latestProject.entry.data.status,
+    tags: latestProject.entry.data.tags,
+  },
+  latestPost && {
+    label: "// latest post",
+    href: `/blog/${slugOf(latestPost.id)}`,
+    title: latestPost.data.title,
+    description: latestPost.data.description,
+    meta: latestPost.data.date,
+    tags: latestPost.data.tags,
+  },
+].filter((s): s is NonNullable<typeof s> => Boolean(s));
+---
+
+{
+  slides.length > 0 && (
+    <div class="carousel" data-carousel aria-roledescription="carousel">
+      <div class="carousel-track" data-track>
+        {slides.map((slide, i) => (
+          <a
+            href={slide.href}
+            class="carousel-slide card group block"
+            aria-roledescription="slide"
+            aria-label={`${i + 1} of ${slides.length}`}
+          >
+            <div class="flex items-start justify-between gap-4 mb-2">
+              <p class="led-accent text-xs">{slide.label}</p>
+              <span class="font-mono text-xs t-muted shrink-0">{slide.meta}</span>
+            </div>
+            <h3 class="font-display text-xl font-semibold t-text group-hover-accent transition-colors mb-2">
+              {slide.title}
+            </h3>
+            <p class="t-muted text-sm leading-relaxed mb-4">{slide.description}</p>
+            <div class="flex flex-wrap gap-2">
+              {slide.tags.map((tag) => (
+                <span class="whitespace-nowrap font-mono text-xs t-muted b-border border px-2 py-1 rounded">
+                  {tag}
+                </span>
+              ))}
+            </div>
+          </a>
+        ))}
+      </div>
+
+      {slides.length > 1 && (
+        <div class="flex items-center justify-between mt-4">
+          <button type="button" class="carousel-btn" data-prev aria-label="Previous slide">
+            ←
+          </button>
+          <div class="flex gap-2">
+            {slides.map((_, i) => (
+              <button
+                type="button"
+                class="carousel-dot"
+                data-dot={i}
+                aria-label={`Go to slide ${i + 1}`}
+              />
+            ))}
+          </div>
+          <button type="button" class="carousel-btn" data-next aria-label="Next slide">
+            →
+          </button>
+        </div>
+      )}
+    </div>
+  )
+}
+
+<script>
+  const AUTOPLAY_MS = 7000;
+
+  document.querySelectorAll<HTMLElement>("[data-carousel]").forEach((root) => {
+    const track = root.querySelector<HTMLElement>("[data-track]")!;
+    const slides = Array.from(track.children) as HTMLElement[];
+    const dots = Array.from(root.querySelectorAll<HTMLButtonElement>("[data-dot]"));
+    if (slides.length < 2) return;
+
+    let current = 0;
+
+    const go = (i: number) => {
+      current = (i + slides.length) % slides.length;
+      track.scrollTo({ left: slides[current].offsetLeft - track.offsetLeft, behavior: "smooth" });
+    };
+
+    const markActive = () => {
+      dots.forEach((d, i) => d.setAttribute("aria-current", String(i === current)));
+    };
+
+    // Keep `current` in sync when the user swipes or scrolls the track.
+    track.addEventListener(
+      "scroll",
+      () => {
+        const step = slides[1].offsetLeft - slides[0].offsetLeft;
+        current = Math.round(track.scrollLeft / step);
+        markActive();
+      },
+      { passive: true },
+    );
+
+    root.querySelector("[data-prev]")?.addEventListener("click", () => go(current - 1));
+    root.querySelector("[data-next]")?.addEventListener("click", () => go(current + 1));
+    dots.forEach((d, i) => d.addEventListener("click", () => go(i)));
+    markActive();
+
+    // Autoplay, paused while hovered or focused, and off for reduced motion.
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    let paused = false;
+    const pause = () => (paused = true);
+    const resume = () => (paused = false);
+    root.addEventListener("mouseenter", pause);
+    root.addEventListener("mouseleave", resume);
+    root.addEventListener("focusin", pause);
+    root.addEventListener("focusout", resume);
+    setInterval(() => {
+      if (!paused && !document.hidden) go(current + 1);
+    }, AUTOPLAY_MS);
+  });
+</script>
+
+<style>
+  .carousel-track {
+    display: flex;
+    gap: 1rem;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+  }
+  .carousel-track::-webkit-scrollbar {
+    display: none;
+  }
+  .carousel-slide {
+    flex: 0 0 100%;
+    scroll-snap-align: start;
+  }
+  .carousel-btn {
+    font-family: var(--font-mono);
+    color: var(--muted);
+    border: 1px solid var(--border);
+    border-radius: 0.5rem;
+    padding: 0.25rem 0.75rem;
+    cursor: pointer;
+    transition: color 0.2s, border-color 0.2s;
+  }
+  .carousel-btn:hover {
+    color: var(--accent);
+    border-color: var(--accent);
+  }
+  .carousel-dot {
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 9999px;
+    background-color: var(--border);
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+  .carousel-dot[aria-current="true"] {
+    background-color: var(--accent);
+  }
+</style>

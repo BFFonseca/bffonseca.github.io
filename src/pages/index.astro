@@ -1,5 +1,6 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import LatestCarousel from "../components/LatestCarousel.astro";
 ---
 
 <BaseLayout title="Home">
@@ -23,22 +24,11 @@ import BaseLayout from "../layouts/BaseLayout.astro";
     </div>
   </section>
 
-  <!-- About -->
+  <!-- Currently working on -->
   <section class="mb-20">
-    <h2 class="section-title">About</h2>
-    <p class="led-accent text-sm mb-6">// who I am</p>
-    <div class="card">
-      <p class="t-muted leading-relaxed mb-4">
-        My name's Bruno and I love to build things and watch cool stuff happen!
-      </p>
-      <p class="t-muted leading-relaxed">
-        Currently working on: <span class="t-text">a Linux Server</span><br />
-        I had some PC spare parts lying around and have been thinking of having my own little server for a while.<br />
-        Find out more on <a
-          href="/projects/project-home-server"
-          class="t-accent hover:underline">the project page</a>.
-      </p>
-    </div>
+    <h2 class="section-title">Currently Working On</h2>
+    <p class="led-accent text-sm mb-6">// latest project & blog post</p>
+    <LatestCarousel />
   </section>
 
   <!-- Skills / Stack -->

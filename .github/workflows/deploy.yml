@@ -20,6 +20,10 @@ jobs:
       contents: read
     steps:
       - uses: actions/checkout@v7
+        with:
+          # Full history, so the home page can find the latest-updated project
+          # from git commit dates (a shallow clone gives every file the same date).
+          fetch-depth: 0
 
       - name: Setup Node
         uses: actions/setup-node@v7
