@@ -5,13 +5,12 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 <BaseLayout title="About" description="Who am I?">
     <section class="mb-20">
         <h1 class="section-title text-4xl mb-2">About</h1>
-        <p class="led-accent text-sm mb-12">// a bit more about who I am</p>
+        <p class="led-accent text-sm mb-12">// About me</p>
 
         <div class="max-w-3xl">
             <div class="card mb-8">
                 <p class="t-muted leading-relaxed mb-6">
-                    My name is Bruno Fonseca and I'm a guy with a passion for
-                    technology.<br/><br/>
+                    My name is Bruno Fonseca and I love building things and watch them work.<br/><br/>
                     I'm most experienced in Firmware and Embedded Software development.
                     <br/>
                     I have a background in Electrical Engineering and I love to build
@@ -27,5 +26,37 @@ import BaseLayout from "../layouts/BaseLayout.astro";
                 </p>
             </div>
         </div>
+
+        <p class="led-accent text-sm mb-12">// About DebugLED</p>
+        <div class="max-w-3xl">
+            <div class="card mb-8">
+                <p class="t-muted leading-relaxed mb-6">
+                    Why DebugLED?<br/>
+                    Have you ever wondered what the most important component is on a PCB?<br/><br/>
+
+                    Most would say the MCU, some would say the transistor, others a fuse.
+                    To me it's that simple diode that lights up when nothing else works. The Debug LED.<br/><br/> 
+
+                    If you've ever designed Hardware, you know what I'm talking about.<br/><br/>
+
+                    The one single thing that you can rely on when nothing else is working. 
+                    The one fundamental component that allows you to implement the more complex systems on the board. <br/>
+                    Before SPI, before UART, before the display, before any other feedback system. <br/>
+                    Sometimes, the only feedback system you have on the board. <br/>
+                    The first thing you code when writting the firmware.<br/><br/> 
+
+                    In those initial moments, it's the sole indicator that there's power, the MCU is working and processing 
+                    your code and that, if all else fails, you'll have that one beacon of feedback from the hardware to 
+                    debug your design and code.<br/><br/>
+
+                    And that's why, to me, this single tiny diode is the most important component in any PCB!<br/><br/>
+
+                    <em>PS: Ok, let's not forget the resistor, otherwise we just have a burned LED 😅</em>
+                </p>
+            </div>
+        </div>
+
+
+
     </section>
 </BaseLayout>
