@@ -37,7 +37,11 @@ I've disassembled the PSU and posted on Reddit about it.
 
 And as <a href="https://www.reddit.com/r/ElectronicsRepair/comments/1uqz15b/help_repairing_a_seasonic_ssr650gb_s12iii650/" target="_blank" rel="noopener noreferrer">some folks on Reddit<span aria-hidden="true" class="align-super text-[0.7em]">↗</span><span class="sr-only"> (opens in a new tab)</span></a> pointed out, this will be a step-by-step approach.
 
+I tried to resolder the trace that was recommended, but [the PSU blew up in my face](/blog/update-automation-and-planning/).
+
+Now, either that trace was not supposed to be shorted, or there's something else shorting the board. Either way, I'm not sure how to follow up on this yet.
+
 
 ## What's Next
 
-Now I just need time to get to it and refresh the solder on the burnt area and then test it out with a PSU Tester.
+Not sure. Right now I have other more important/interesting projects going on. So this might be stored away for now.
