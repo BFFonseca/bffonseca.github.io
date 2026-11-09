@@ -1,0 +1,24 @@
+---
+import { analytics } from '../site.config';
+---
+
+{analytics.enabled && analytics.goatcounterCode && (
+  <meta name="goatcounter-code" content={analytics.goatcounterCode} />
+)}
+
+<script>
+  import { pagePath } from '../lib/goatcounter';
+
+  const code = document.querySelector<HTMLMetaElement>('meta[name="goatcounter-code"]')?.content;
+
+  if (code) {
+    // Must be set before count.js loads; it reads these settings on start-up
+    (window as any).goatcounter = { path: () => pagePath() };
+
+    const script = document.createElement('script');
+    script.src = 'https://gc.zgo.at/count.js';
+    script.async = true;
+    script.dataset.goatcounter = `https://${code}.goatcounter.com/count`;
+    document.head.appendChild(script);
+  }
+</script>

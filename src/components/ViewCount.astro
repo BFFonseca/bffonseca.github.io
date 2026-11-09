@@ -1,0 +1,39 @@
+---
+import { analytics, viewCounts } from '../site.config';
+
+interface Props {
+  class?: string;
+}
+
+const { class: className } = Astro.props;
+const show = analytics.enabled && analytics.goatcounterCode && viewCounts.enabled;
+---
+
+{show && (
+  <span
+    class:list={['view-count font-mono text-sm t-muted', className]}
+    data-code={analytics.goatcounterCode}
+    data-minimum={viewCounts.minimum}
+    hidden
+  ></span>
+)}
+
+<script>
+  import { pagePath } from '../lib/goatcounter';
+
+  for (const el of document.querySelectorAll<HTMLElement>('.view-count')) {
+    const url = `https://${el.dataset.code}.goatcounter.com/counter/${encodeURIComponent(pagePath())}.json`;
+
+    // A page with no views yet returns 404; any failure just leaves the count hidden
+    fetch(url)
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data: { count?: string } | null) => {
+        if (!data?.count) return;
+        const views = Number(data.count.replace(/\D/g, '')); // count is formatted, e.g. "1,234"
+        if (views < Number(el.dataset.minimum)) return;
+        el.textContent = `${data.count} ${views === 1 ? 'view' : 'views'}`;
+        el.hidden = false;
+      })
+      .catch(() => {});
+  }
+</script>
