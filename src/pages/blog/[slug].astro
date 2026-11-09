@@ -2,6 +2,7 @@
 import { getCollection, render } from "astro:content";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import Comments from "../../components/Comments.astro";
+import ViewCount from "../../components/ViewCount.astro";
 
 export async function getStaticPaths() {
   const posts = await getCollection("blog", ({ data }) => !data.draft);
@@ -36,7 +37,10 @@ const { title, description, date, tags } = post.data;
         }
       </div>
       <h1 class="font-display text-4xl font-bold t-text mb-3">{title}</h1>
-      <time class="font-mono text-sm t-muted">{date}</time>
+      <div class="flex flex-wrap gap-x-4 gap-y-1">
+        <time class="font-mono text-sm t-muted">{date}</time>
+        <ViewCount />
+      </div>
     </header>
 
     <div class="prose-content">

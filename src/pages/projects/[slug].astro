@@ -2,6 +2,7 @@
 import { getCollection, render } from "astro:content";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import ProjectSidebar from "../../components/ProjectSidebar.astro";
+import ViewCount from "../../components/ViewCount.astro";
 
 export async function getStaticPaths() {
   const projects = await getCollection("projects");
@@ -42,6 +43,7 @@ const relatedPosts = blogPosts
 
     <article>
       <h1 class="section-title text-4xl mb-4">{title}</h1>
+      <ViewCount class="block mb-4" />
 
       <div class="flex flex-wrap gap-2 mb-6">
         {
