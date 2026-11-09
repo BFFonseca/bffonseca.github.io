@@ -5,7 +5,7 @@
   --color-led-green:   #00FF94;
   --color-led-dark:    #0A0E1A;
   --color-led-surface: #111827;
-  --color-led-muted:   #6B7280;
+  --color-led-muted:   #9CA3AF;
   --color-led-light:   #F3F4F6;
   --font-mono:    "JetBrains Mono", monospace;
   --font-display: "Space Grotesk", sans-serif;
@@ -19,7 +19,7 @@
     --bg:      #0A0E1A;
     --surface: #111827;
     --text:    #F3F4F6;
-    --muted:   #6B7280;
+    --muted:   #9CA3AF;
     --accent:  #00FF94;
     --done:    #F3F4F6;
     --border:  #1f2937;
