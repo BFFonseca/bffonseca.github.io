@@ -24,3 +24,15 @@ export const viewCounts = {
   // Hide the count on pages with fewer views than this. GoatCounter caches counts for up to 4 hours.
   minimum: 0,
 } as const;
+
+export const thumbnails = {
+  // Default crop for every thumbnail. Each post/project can override any of these with
+  // `thumbnailCrop` in its frontmatter (see README). The image always fills the box; what
+  // doesn't fit is cut off.
+  //   x, y  focal point in % of the image (0 = left/top, 50 = centre, 100 = right/bottom).
+  //         This point is kept in view and zoom grows around it.
+  //   zoom  1 = just enough to fill the box, 2 = twice that, etc.
+  //   height  box height (any CSS length). Site-wide only.
+  strip: { x: 50, y: 50, zoom: 1, height: { mobile: '5rem', desktop: '6rem' } }, // index cards
+  hero:  { x: 50, y: 50, zoom: 1, height: 'clamp(10rem, 40vw, 20rem)' },        // top of post/project page
+} as const;

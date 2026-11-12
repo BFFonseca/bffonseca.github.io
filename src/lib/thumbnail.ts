@@ -14,7 +14,8 @@ const images = import.meta.glob<ImageMetadata>(
 const THUMB_NAME = /^thumbnail\.(png|jpe?g)$/i;
 
 // Markdown images ![alt](src "title") and HTML <img ...> tags, in document order.
-const IMAGE_TAG = /!\[([^\]]*)\]\(\s*<?([^)\s>]+)>?(?:\s+"[^"]*")?\s*\)|<img\b[^>]*>/gi;
+// Markdown destinations may be wrapped in <...> (allows spaces) and followed by a "title".
+const IMAGE_TAG = /!\[([^\]]*)\]\(\s*(?:<([^>]+)>|([^)\s]+))(?:\s+(?:"[^"]*"|'[^']*'|\([^)]*\)))?\s*\)|<img\b[^>]*>/gi;
 const attr = (tag: string, name: string) =>
   tag.match(new RegExp(`\\b${name}\\s*=\\s*(?:"([^"]*)"|'([^']*)')`, 'i'))?.slice(1).find((v) => v !== undefined);
 
@@ -66,7 +67,7 @@ export function getThumbnail(entry: CollectionEntry<'blog'> | CollectionEntry<'p
   let last: Thumb | undefined;
   for (const m of (entry.body ?? '').matchAll(IMAGE_TAG)) {
     const isHtml = m[0].startsWith('<');
-    const ref = isHtml ? attr(m[0], 'src') : m[2];
+    const ref = isHtml ? attr(m[0], 'src') : (m[2] ?? m[3]);
     const key = ref && resolveRef(ref, dir);
     if (key) last = { src: images[key], alt: alt ?? (isHtml ? attr(m[0], 'alt') : m[1]) ?? '' };
   }

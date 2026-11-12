@@ -40,7 +40,7 @@ const statusFallback = 't-muted b-border';
             <a href={`/projects/${project.id.split('/').pop()?.replace(/\.md$/, '')}`} tabindex="-1" aria-hidden="true">
               <Thumbnail
                 src={thumb.src}
-                position={project.data.thumbnailPosition}
+                crop={project.data.thumbnailCrop}
                 variant="strip"
               />
             </a>
