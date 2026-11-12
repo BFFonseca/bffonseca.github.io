@@ -6,6 +6,16 @@ repo: 'https://github.com/BFFonseca/bffonseca.github.io'
 live: ''
 status: 'live'
 relatedTag: 'project-debugled'
+thumbnailCrop:
+  strip:
+    desktop:
+      y: 24.4
+      image: 'none'
+  hero:
+    desktop:
+      x: 43
+      y: 0
+      zoom: 2.59
 ---
 # Start with why
 

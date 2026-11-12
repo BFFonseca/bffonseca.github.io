@@ -88,7 +88,7 @@ Each project lives in its own subfolder and can include a `media/` directory for
 
 Each entry gets a thumbnail automatically: a file named `thumbnail.png`, `thumbnail.jpg` or `thumbnail.jpeg` in the entry's folder (or its `media/` folder) is used if present; otherwise the last image in the post/project body is used (Markdown `![alt](media/image.png)` — also `./media/…`, `<media/with spaces.png>` and `%20` — or `<img>` tags; local paths or `raw.githubusercontent.com` URLs pointing at files in this repo). Entries with neither get no thumbnail.
 
-The thumbnail shows as a thin cropped strip between the title and description on the `/blog` and `/projects` index cards, and as a full-width banner (capped at 20rem tall) at the top of the post or project page. 
+The thumbnail shows as a thin cropped strip between the title and description on the `/blog` and `/projects` index cards (and the latest-post card on the home page), and as a full-width banner (capped at 20rem tall) at the top of the post or project page. 
 #### Thumbnail image and crop
 
 There are four thumbnail slots: the index-card **strip** and the page **banner** (`hero`), each on **desktop** (768px and wider) and **phone** (`mobile`). Each slot can use a different image and crop. The image always fills its box (`object-fit: cover`); whatever doesn't fit is cut off. Defaults (and box heights) live in `thumbnails` in `src/site.config.ts`. Any post or project can override them:
