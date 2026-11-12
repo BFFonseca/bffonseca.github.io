@@ -79,6 +79,7 @@ export function getThumbnail(entry: CollectionEntry<'blog'> | CollectionEntry<'p
 // image and crop come from the most specific `thumbnailCrop` level that sets them:
 //   thumbnailCrop.<variant>.<screen>  →  thumbnailCrop.<variant>  →  thumbnailCrop  →  defaults
 // (image falls back to the automatic thumbnail picked by getThumbnail above).
+// `image: none` means that slot has no thumbnail.
 
 export type Variant = 'strip' | 'hero';
 export type Screen = 'desktop' | 'mobile';
@@ -111,6 +112,8 @@ export function slotLevels(crop: ThumbnailCrop | undefined, v: Variant, s: Scree
   return [c[v]?.[s], c[v], c].filter((l): l is SlotCrop => !!l);
 }
 
+export const NO_IMAGE = 'none';
+
 export interface Slot { src: ImageMetadata; alt: string; x: number; y: number; zoom: number }
 
 export function resolveSlot(
@@ -124,6 +127,7 @@ export function resolveSlot(
   const auto = getThumbnail(entry);
   const dir = entryDir(entry);
   const chosen = pick('image');
+  if (chosen === NO_IMAGE) return undefined;
   const key = chosen && dir ? normalise(`${dir}/${chosen}`) : undefined;
   const src = (key && images[key]) || auto?.src;
   if (!src) return undefined;

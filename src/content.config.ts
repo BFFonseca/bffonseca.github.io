@@ -9,7 +9,7 @@ const slot = z.object({
   x:     z.number().min(0).max(100).optional(), // focal point, % from left
   y:     z.number().min(0).max(100).optional(), // focal point, % from top
   zoom:  z.number().min(1).optional(),          // 1 = just fills the box
-  image: z.string().optional(),                 // image path relative to the .md, e.g. media/photo.jpg
+  image: z.string().optional(),                 // image path relative to the .md (e.g. media/photo.jpg), or 'none' for no thumbnail
 });
 const variant = slot.extend({
   desktop: slot.optional(), // screens 768px and wider

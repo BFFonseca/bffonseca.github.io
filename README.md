@@ -109,12 +109,12 @@ thumbnailCrop:
       x: 20
 ```
 
-Every field is optional. Each slot uses the most specific value set: `strip`/`hero` → `desktop`/`mobile` value, then the `strip`/`hero` value, then the top-level value, then the site default. Without an `image`, the automatic thumbnail (above) is used.
+Every field is optional. Each slot uses the most specific value set: `strip`/`hero` → `desktop`/`mobile` value, then the `strip`/`hero` value, then the top-level value, then the site default. Without an `image`, the automatic thumbnail (above) is used. Use `image: none` for no thumbnail, at any level: top level hides all of them, `strip: { image: none }` hides only the index strip, `strip: { mobile: { image: none } }` hides it only on phones.
 
 **Interactive editor:** run `npm run dev` and click **dev** in the nav (or open [`/dev`](http://localhost:4321/dev)), then **Thumbnail editor**. Pick a post or project, then:
 
 - **Thumbnail** (Both / Strip / Banner) and **Screen** (Both / Desktop / Phone) choose which slots you're editing: the shared settings, one thumbnail on both screens, or a single slot.
-- **Image** picks any image from the entry's folder for the selection (or inherits it).
+- **Image** picks any image from the entry's folder for the selection, **none** for no thumbnail, or inherits it.
 - **Drag a frame** over the full image to choose what's shown (cyan = strip, amber = banner, dashed = phone). Clicking outside a frame jumps it there. When the selected slots use different images, each image gets its own panel with its frames.
 - **Scroll** over the image or use the slider to **zoom**.
 - Live previews show all four slots at their real sizes, with the image and values each one ends up with.

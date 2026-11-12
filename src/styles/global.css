@@ -117,7 +117,10 @@
 }
 .thumb-strip { border-radius: 0.5rem; margin-bottom: 0.875rem; }
 .thumb-hero  { border-radius: 0.75rem; margin-bottom: 2rem; }
+.thumb-hide-sm { display: none; } /* `image: none` on phones only */
 @media (min-width: 768px) {
   .thumb { height: var(--thumb-h-md, var(--thumb-h-sm)); }
+  .thumb-hide-sm { display: block; }
+  .thumb-hide-md { display: none; } /* `image: none` on desktop only */
   .thumb img { object-position: var(--tx-md) var(--ty-md); transform-origin: var(--tx-md) var(--ty-md); transform: scale(var(--tz-md)); }
 }

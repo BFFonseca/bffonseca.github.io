@@ -70,6 +70,7 @@ const data = JSON.stringify({ entries, defaults: thumbnails, saveEndpoint: SAVE_
 
         <!-- One stage per distinct image used by the selected slots (filled in by the script). -->
         <div class="te-stages" id="te-stages"></div>
+        <p class="te-none font-mono text-sm t-muted" id="te-none" hidden>// no thumbnail for this selection. Pick an image to add one.</p>
         <template id="te-stage-tpl">
           <figure class="te-stage-wrap">
             <figcaption class="te-stage-cap font-mono"></figcaption>
@@ -201,7 +202,9 @@ const data = JSON.stringify({ entries, defaults: thumbnails, saveEndpoint: SAVE_
     const eff = (v: Variant, s: Screen) => {
       const ls = levels(v, s);
       const pick = <K extends keyof Slot>(k: K) => ls.find((l) => l?.[k] !== undefined)?.[k];
-      const img = imgByPath(pick('image')) ?? imgByPath(entry.auto) ?? entry.images[0];
+      // Same rules as the site: 'none' = no thumbnail; otherwise the chosen image, else the automatic pick.
+      const chosen = pick('image');
+      const img: Img | null = chosen === 'none' ? null : imgByPath(chosen) ?? imgByPath(entry.auto) ?? null;
       return { img, x: pick('x') ?? defaults[v].x, y: pick('y') ?? defaults[v].y, zoom: pick('zoom') ?? defaults[v].zoom };
     };
     // First slot the current selection affects; its image is shown on the stage.
@@ -211,6 +214,7 @@ const data = JSON.stringify({ entries, defaults: thumbnails, saveEndpoint: SAVE_
     // + object-position x% y% + scale(zoom) around the same point).
     function region(v: Variant, s: Screen) {
       const { img, x, y, zoom } = eff(v, s);
+      if (!img) return { left: 0, top: 0, fw: 1, fh: 1 }; // no thumbnail: nothing to frame
       const W = width(v, s), H = px(height(v, s));
       const sc = Math.max(W / img.w, H / img.h) * zoom;
       const fw = Math.min(1, W / (img.w * sc)), fh = Math.min(1, H / (img.h * sc));
@@ -245,7 +249,9 @@ const data = JSON.stringify({ entries, defaults: thumbnails, saveEndpoint: SAVE_
       const shown = eff(f.v, f.s);
 
       // One stage per distinct image among the selected slots, in slot order.
-      const used = [...new Set(SLOTS.filter(({ v, s }) => affects(v, s)).map(({ v, s }) => eff(v, s).img))];
+      const used = [...new Set(SLOTS.filter(({ v, s }) => affects(v, s)).map(({ v, s }) => eff(v, s).img))]
+        .filter((i): i is Img => i !== null);
+      $('te-none').hidden = used.length > 0;
       for (const [path, el] of stages) if (!used.some((i) => i.path === path)) { el.remove(); stages.delete(path); }
       used.forEach((img, idx) => {
         const wrap = stages.get(img.path) ?? makeStage(img.path);
@@ -282,17 +288,19 @@ const data = JSON.stringify({ entries, defaults: thumbnails, saveEndpoint: SAVE_
         box.style.height = height(v, s);
         box.classList.toggle('active', affects(v, s));
         const pi = box.querySelector('img')!;
-        if (pi.getAttribute('src') !== e.img.url) pi.src = e.img.url;
+        box.classList.toggle('none', !e.img);
+        if (e.img && pi.getAttribute('src') !== e.img.url) pi.src = e.img.url;
         Object.assign(pi.style, { objectPosition: `${e.x}% ${e.y}%`, transform: `scale(${e.zoom})`, transformOrigin: `${e.x}% ${e.y}%` });
         const cap = document.querySelector(`[data-cap="${v}-${s}"]`)!;
-        cap.textContent = `${NAME[v][0].toUpperCase() + NAME[v].slice(1)} · ${NAME[s]} — ${e.img.path} · x ${e.x.toFixed(1)} y ${e.y.toFixed(1)} · ${e.zoom.toFixed(2)}×`;
+        cap.textContent = `${NAME[v][0].toUpperCase() + NAME[v].slice(1)} · ${NAME[s]} — ${e.img ? `${e.img.path} · x ${e.x.toFixed(1)} y ${e.y.toFixed(1)} · ${e.zoom.toFixed(2)}×` : 'no thumbnail'}`;
       });
 
       // Image picker for the current selection.
       const own = target().image;
-      const inherited = (() => { const t = target(); const keep = t.image; delete t.image; const p = eff(f.v, f.s).img.path; if (keep !== undefined) t.image = keep; return p; })();
+      const inherited = (() => { const t = target(); const keep = t.image; delete t.image; const p = eff(f.v, f.s).img?.path ?? 'no thumbnail'; if (keep !== undefined) t.image = keep; return p; })();
       imageSelect.innerHTML = '';
       imageSelect.append(new Option(`inherit (${inherited})`, ''));
+      imageSelect.append(new Option('none · no thumbnail', 'none'));
       for (const i of entry.images) imageSelect.append(new Option(i.path + (i.path === entry.auto ? '  · automatic pick' : ''), i.path));
       imageSelect.value = own ?? '';
 
@@ -372,7 +380,7 @@ const data = JSON.stringify({ entries, defaults: thumbnails, saveEndpoint: SAVE_
       stage.addEventListener('wheel', (ev) => {
         ev.preventDefault();
         // Zoom relative to the first selected slot shown on this image.
-        const f = SLOTS.find(({ v, s }) => affects(v, s) && eff(v, s).img.path === path) ?? focus();
+        const f = SLOTS.find(({ v, s }) => affects(v, s) && eff(v, s).img?.path === path) ?? focus();
         setZoom(eff(f.v, f.s).zoom * (ev.deltaY < 0 ? 1.1 : 1 / 1.1));
       }, { passive: false });
       return wrap;
@@ -484,6 +492,9 @@ const data = JSON.stringify({ entries, defaults: thumbnails, saveEndpoint: SAVE_
   .te-pv { overflow: hidden; border: 1px solid var(--border); border-radius: 0.5rem; background: var(--surface); }
   .te-pv.active { border-color: var(--accent); }
   .te-pv img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .te-pv.none { border-style: dashed; background: repeating-linear-gradient(45deg, transparent 0 8px, var(--border) 8px 9px); }
+  .te-pv.none img { display: none; }
+  .te-none { padding: 2rem 1rem; text-align: center; border: 1px dashed var(--border); border-radius: 0.5rem; }
 
   .te-yaml { background: var(--surface); border: 1px solid var(--border); border-radius: 0.5rem; padding: 0.9rem 1rem; font: 0.8rem var(--font-mono); color: var(--text); white-space: pre-wrap; }
 </style>
