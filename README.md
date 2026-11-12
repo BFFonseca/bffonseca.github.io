@@ -114,6 +114,7 @@ Every field is optional. Each slot uses the most specific value set: `strip`/`he
 **Interactive editor:** run `npm run dev` and click **dev** in the nav (or open [`/dev`](http://localhost:4321/dev)), then **Thumbnail editor**. Pick a post or project; each of the four thumbnails (strip · desktop, strip · phone, banner · desktop, banner · phone) has its own card, edited independently:
 
 - **Image** picks any image from the entry's folder, **none** for no thumbnail, or **automatic**.
+- On **project** pages, tick **images from related blog posts** to also list images from posts tagged with the project's `relatedTag` (grouped per post). They're saved as relative paths, e.g. `image: '../../blog/7/media/photo.png'`.
 - **Drag the frame** over the image to choose what's shown; clicking elsewhere on the image jumps it there.
 - **Scroll** over the image or use the slider to **zoom**.
 - A preview at the real size sits under each card; **reset** clears that thumbnail.

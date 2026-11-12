@@ -5,7 +5,8 @@
 // block per thumbnail (thumbnailCrop.<strip|hero>.<desktop|mobile>).
 import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import { entryImages, getThumbnail, slotLevels, SCREENS, VARIANTS, type SlotCrop, type ThumbnailCrop } from '../../lib/thumbnail';
+import path from 'node:path';
+import { entryDir, entryImages, getThumbnail, slotLevels, SCREENS, VARIANTS, type SlotCrop, type ThumbnailCrop } from '../../lib/thumbnail';
 import { thumbnails } from '../../site.config';
 import { SAVE_ENDPOINT } from './index';
 
@@ -16,13 +17,34 @@ const KEYS = ['x', 'y', 'zoom', 'image'] as const;
 const blog = await getCollection('blog');
 const projects = await getCollection('projects');
 
+const toImg = (p: string, src: ImageMetadata) => ({ path: p, url: src.src, w: src.width, h: src.height });
+
+// For a project: images from blog posts tagged with its relatedTag, as paths relative to the project's .md.
+function relatedImages(project: (typeof projects)[number]) {
+  const tag = project.data.relatedTag;
+  const from = entryDir(project);
+  if (!tag || !from) return [];
+  return blog
+    .filter((post) => post.data.tags.includes(tag))
+    .sort((a, b) => b.data.date.localeCompare(a.data.date))
+    .map((post) => {
+      const dir = entryDir(post)!;
+      return {
+        title: post.data.title + (post.data.draft ? ' (draft)' : ''),
+        images: entryImages(post).map((i) => toImg(path.posix.relative(from, `${dir}/${i.path}`), i.src)),
+      };
+    })
+    .filter((p) => p.images.length > 0);
+}
+
 const entries = [
   ...blog.map((e) => ({ e, collection: 'blog' as const })),
   ...projects.map((e) => ({ e, collection: 'projects' as const })),
 ]
   .map(({ e, collection }) => {
     const images = entryImages(e);
-    if (!images.length || !e.filePath) return undefined;
+    const related = collection === 'projects' ? relatedImages(e as (typeof projects)[number]) : [];
+    if ((!images.length && !related.length) || !e.filePath) return undefined;
     const auto = getThumbnail(e);
     const crop = e.data.thumbnailCrop as ThumbnailCrop | undefined;
     // Each thumbnail's explicitly set values, from whichever level of the frontmatter sets them.
@@ -40,7 +62,8 @@ const entries = [
       collection,
       title: e.data.title + ('draft' in e.data && e.data.draft ? ' (draft)' : ''),
       file: e.filePath.replace(/\\/g, '/'),
-      images: images.map((i) => ({ path: i.path, url: i.src.src, w: i.src.width, h: i.src.height })),
+      images: images.map((i) => toImg(i.path, i.src)),
+      related,
       auto: images.find((i) => i.src === auto?.src)?.path ?? null,
       slots,
     };
@@ -66,6 +89,10 @@ const data = JSON.stringify({ entries, defaults: thumbnails, saveEndpoint: SAVE_
             <select id="te-entry">
               {entries.map((x) => <option value={x.key}>{x.collection} · {x.title}</option>)}
             </select>
+          </label>
+          <label class="te-check font-mono" id="te-related-wrap" hidden>
+            <input type="checkbox" id="te-related" />
+            <span>images from related blog posts <b id="te-related-count"></b></span>
           </label>
           <div class="te-actions">
             <button type="button" class="btn-outline" id="te-reset">Reset all</button>
@@ -122,7 +149,8 @@ const data = JSON.stringify({ entries, defaults: thumbnails, saveEndpoint: SAVE_
   type Screen = 'desktop' | 'mobile';
   type SlotKey = `${Variant}-${Screen}`;
   interface Img { path: string; url: string; w: number; h: number }
-  interface Entry { key: string; collection: 'blog' | 'projects'; title: string; file: string; images: Img[]; auto: string | null; slots: Record<SlotKey, Slot> }
+  interface Related { title: string; images: Img[] }
+  interface Entry { key: string; collection: 'blog' | 'projects'; title: string; file: string; images: Img[]; related: Related[]; auto: string | null; slots: Record<SlotKey, Slot> }
   interface Defaults { x: number; y: number; zoom: number; height: string | { mobile: string; desktop: string } }
 
   const dataEl = document.getElementById('te-data');
@@ -155,7 +183,14 @@ const data = JSON.stringify({ entries, defaults: thumbnails, saveEndpoint: SAVE_
     let entry = entries.find((e) => e.key === new URLSearchParams(location.hash.slice(1)).get('entry')) ?? entries[0];
 
     const slot = (k: SlotKey) => state.get(entry.key)![k];
-    const imgByPath = (p?: string | null) => entry.images.find((i) => i.path === p);
+    const relatedImgs = () => entry.related.flatMap((r) => r.images);
+    const imgByPath = (p?: string | null) => entry.images.find((i) => i.path === p) ?? relatedImgs().find((i) => i.path === p);
+
+    // "Images from related blog posts" checkbox, per entry; starts ticked if a thumbnail already uses one.
+    const relatedBox = $<HTMLInputElement>('te-related');
+    const showRelated = new Map(entries.map((e) => [e.key,
+      Object.values(e.slots).some((c) => e.related.some((r) => r.images.some((i) => i.path === c.image)))]));
+    relatedBox.addEventListener('change', () => { showRelated.set(entry.key, relatedBox.checked); render(); });
 
     // Same rules as the site: 'none' = no thumbnail; otherwise the chosen image, else the automatic pick.
     const eff = (v: Variant, s: Screen) => {
@@ -179,6 +214,9 @@ const data = JSON.stringify({ entries, defaults: thumbnails, saveEndpoint: SAVE_
       const hash = `#entry=${encodeURIComponent(entry.key)}`;
       if (location.hash !== hash) history.replaceState(null, '', hash);
       select.value = entry.key;
+      $('te-related-wrap').hidden = entry.related.length === 0;
+      $('te-related-count').textContent = `(${relatedImgs().length})`;
+      relatedBox.checked = showRelated.get(entry.key)!;
 
       for (const card of cards) {
         const v = card.dataset.v as Variant, s = card.dataset.s as Screen;
@@ -195,7 +233,19 @@ const data = JSON.stringify({ entries, defaults: thumbnails, saveEndpoint: SAVE_
         picker.innerHTML = '';
         picker.append(new Option(`automatic (${entry.auto ?? 'none found'})`, ''));
         picker.append(new Option('none · no thumbnail', 'none'));
-        for (const i of entry.images) picker.append(new Option(i.path, i.path));
+        const own = document.createElement('optgroup');
+        own.label = 'this entry';
+        for (const i of entry.images) own.append(new Option(i.path, i.path));
+        if (entry.images.length) picker.append(own);
+        for (const rel of entry.related) {
+          // With the checkbox off, only list a related image if this thumbnail already uses it.
+          const imgs = showRelated.get(entry.key) ? rel.images : rel.images.filter((i) => i.path === c.image);
+          if (!imgs.length) continue;
+          const group = document.createElement('optgroup');
+          group.label = `blog · ${rel.title}`;
+          for (const i of imgs) group.append(new Option(i.path.split('/').pop()!, i.path));
+          picker.append(group);
+        }
         picker.value = c.image ?? '';
 
         const zoom = card.querySelector<HTMLInputElement>('[data-act="zoom"]')!;
@@ -355,6 +405,9 @@ const data = JSON.stringify({ entries, defaults: thumbnails, saveEndpoint: SAVE_
   .te-bar { display: flex; flex-wrap: wrap; gap: 1rem 1.5rem; align-items: end; margin-bottom: 0.5rem; }
   .te-row { display: flex; flex-wrap: wrap; gap: 0.75rem 1.25rem; align-items: end; margin-bottom: 0.9rem; }
   .te-grow { flex: 1 1 14rem; min-width: 0; }
+  .te-check { display: flex; align-items: center; gap: 0.45rem; font-size: 0.8rem; color: var(--muted); padding-bottom: 0.5rem; cursor: pointer; }
+  .te-check[hidden] { display: none; }
+  .te-check input { accent-color: var(--accent); }
   .te-field { display: flex; flex-direction: column; gap: 0.35rem; font-family: var(--font-mono); font-size: 0.8rem; color: var(--muted); }
   .te-field select { background: var(--surface); color: var(--text); border: 1px solid var(--border); border-radius: 0.5rem; padding: 0.45rem 0.6rem; width: 100%; }
   .te-zoom input { width: min(100%, 14rem); accent-color: var(--accent); }
