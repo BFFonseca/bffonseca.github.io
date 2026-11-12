@@ -239,6 +239,14 @@
     "title": "Content update",
     "status": "ok"
   },
+  "35": {
+    "number": 35,
+    "sha": "0147bc57f2caf231f48cf46e5506be83c96779b4",
+    "date": "2026-11-12T17:59:55Z",
+    "branch": "thumbnail-slots",
+    "title": "Per-slot thumbnail images/crops, dev tools page",
+    "status": "ok"
+  },
   "36": {
     "number": 36,
     "sha": "9fee4cac319238ada3820c5ab6ee6ff70c018afd",
