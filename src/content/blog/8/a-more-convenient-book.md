@@ -2,7 +2,7 @@
 title: 'A More Convenient Book'
 description: "📚 I love reading. I don't love bringing a 1200 page book everywhere."
 date: '2026-10-27'
-tags: ['hardware', 'sourcing', 'epaper-display', 'books']
+tags: ['hardware', 'sourcing', 'epaper-display', 'books', 'project-e-reader']
 draft: false
 ---
 This one is, ironically, a bit of a read. Might have gotten carried away writting about a topic I like. *Whoops*
@@ -15,7 +15,7 @@ Everywhere you go, you see people looking down at a tiny plastic rectangle in th
 
 I digress.
 
-To try and improve not just my mental health but also physical health, I've been making a concious effort for some years now to reduce screen time. It started out by uninstalling social media apps, leaving my phone in silent mode turned down in another room and disabling some apps' notifications. This went already went a long way, and made me feel better. Less tired, more aware, more present.
+To try and improve not just my mental health but also physical health, I've been making a concious effort for some years now to reduce screen time. It started out by uninstalling social media apps, leaving my phone in silent mode turned down in another room and disabling some apps' notifications. This already went a long way, and made me feel better. Less tired, more aware, more present.
 
 With that came another benefit: more time. Time I can spend doing something I like doing.
 
@@ -27,7 +27,7 @@ I've loved reading since my early teens. I remember starkly when I was about 12/
 
 On our second or third day, we passed by a street book market and my mom asked if I wanted to get a book for the vacations. I browsed a bit and said to myself "Sure, why not? There's not much to do anyway.", so I ended up picking up *The Hunger Games*. Yes, the hit 2012 movie is, in fact, based on a book. I know, *shocking*. 
 
-This happened on a night stroll, after we had dinner in a nearby town. After **two days**, I was asking my parents for the second book. I *devoured* almost 400 pages in two days. This is where my real passion for reading began. Geting immersed in another world, living adventures through the character's experiences. Feeling joy, sadness, wonder and so many other feelings just by reading something that another human came up with and built felt amazing. I still does.
+This happened on a night stroll, after we had dinner in a nearby town. After **two days**, I was asking my parents for the second book. I *devoured* almost 400 pages in two days. This is where my real passion for reading began. Geting immersed in another world, living adventures through the character's experiences. Feeling joy, sadness, wonder and so many other feelings just by reading something that another human came up with and built felt amazing. It still does.
 
 Throughout the years I've read many more fantasy and non-fantasy books. From Murakami to Goggins, Robert Green or Lao Tsu. I've read quite a lot over the past two decades. And it's come full-circle. It started out with an almost addiction to fantasy books like *The Hunger Games*, *Shadow and Bone* (shoutout to the *Six of Crows*, one of my all time favourites to this day) and *Kafka on the Shore*. 
 
