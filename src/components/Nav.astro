@@ -2,6 +2,8 @@
 // The logo links home and About lives in the footer, which keeps the header
 // narrow enough for 360px phones.
 const navLinks = [
+  // Dev tools page, only while running `npm run dev` (never in the built site).
+  ...(import.meta.env.DEV ? [{ href: '/dev', label: 'dev' }] : []),
   { href: '/projects', label: 'projects' },
   { href: '/blog',     label: 'blog'     },
 ];
@@ -32,6 +34,9 @@ const isActive = (href: string) => pathname === href || pathname.startsWith(href
         ))}
       </ul>
 
+      <!-- Site version dropdown (sm and up; on phones it sits in the Footer) -->
+      <span data-version-switcher hidden class="max-sm:hidden"></span>
+
       <!-- Dark/Light mode toggle -->
       <button
         id="theme-toggle"
@@ -47,6 +52,9 @@ const isActive = (href: string) => pathname === href || pathname.startsWith(href
 <style>
   .active-link { color: var(--accent) !important; }
 </style>
+
+<!-- Shared with old versions, so it's served as-is from public/ -->
+<script is:inline src="/version-switcher.js" defer></script>
 
 <script>
   const html = document.documentElement;

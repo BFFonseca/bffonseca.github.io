@@ -17,7 +17,8 @@ jobs:
   build:
     runs-on: ubuntu-latest
     permissions:
-      contents: read
+      # write: main saves newly built old versions to the `versions` branch
+      contents: write
     steps:
       - uses: actions/checkout@v7
         with:
@@ -42,6 +43,36 @@ jobs:
 
       - name: Check internal links
         run: npm run check:links
+
+      # Version history: a frozen copy of the site per merged PR, at /versions/pr-<N>/.
+      # Builds are kept on the `versions` branch, so each PR is only built once.
+      # PR runs build and assemble too (so they test it) but only main saves.
+      - name: Check out saved versions
+        run: |
+          if git ls-remote --exit-code --heads origin versions > /dev/null; then
+            git fetch --quiet origin versions
+            git worktree add --detach .versions-store origin/versions
+          else
+            git worktree add --orphan -b versions .versions-store
+          fi
+
+      - name: Build new versions
+        run: node scripts/versions.mjs build --store .versions-store
+
+      - name: Save new versions
+        if: github.event_name != 'pull_request'
+        working-directory: .versions-store
+        run: |
+          git add -A
+          if ! git diff --cached --quiet; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898699+github-actions[bot]@users.noreply.github.com"
+            git commit --quiet -m "Versions as of ${GITHUB_SHA::7}"
+            git push --quiet origin HEAD:refs/heads/versions
+          fi
+
+      - name: Add versions to site
+        run: node scripts/versions.mjs assemble --store .versions-store
 
       - name: Upload artifact
         if: github.event_name != 'pull_request'
