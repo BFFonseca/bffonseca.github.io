@@ -10,6 +10,9 @@ const blog = defineCollection({
     date:        z.string(), // e.g. "2026-01-01"
     tags:        z.array(z.string()).optional().default([]),
     draft:       z.boolean().optional().default(false),
+    // Thumbnail = thumbnail.png/.jpg/.jpeg in the entry's folder or media/, else the last image in the body
+    thumbnailAlt:      z.string().optional(),
+    thumbnailPosition: z.string().optional(), // CSS object-position for cropping, e.g. "center 30%"
   }),
 });
 
@@ -23,6 +26,9 @@ const projects = defineCollection({
     live:        z.string().optional(),
     status:      z.enum(['planned', 'active', 'live', 'paused', 'complete']).default('planned'),
     relatedTag:  z.string().optional(),
+    // Thumbnail = thumbnail.png/.jpg/.jpeg in the entry's folder or media/, else the last image in the body
+    thumbnailAlt:      z.string().optional(),
+    thumbnailPosition: z.string().optional(), // CSS object-position for cropping, e.g. "center 30%"
   }),
 });
 
