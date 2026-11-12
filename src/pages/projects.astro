@@ -2,6 +2,7 @@
 import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Thumbnail from '../components/Thumbnail.astro';
+import { getThumbnail } from '../lib/thumbnail';
 
 const projects = await getCollection('projects');
 const statusStyles: Record<string, string> = {
@@ -18,7 +19,9 @@ const statusFallback = 't-muted b-border';
     <p class="led-accent text-sm mb-12">// things I'm building or have built.</p>
 
     <div class="grid gap-6">
-      {projects.map(project => (
+      {projects.map(project => {
+        const thumb = getThumbnail(project);
+        return (
         <div class="card group">
           <div class="flex items-start justify-between gap-4 mb-3">
             <a href={`/projects/${project.id.split('/').pop()?.replace(/\.md$/, '')}`}>
@@ -33,10 +36,10 @@ const statusFallback = 't-muted b-border';
             </span>
           </div>
 
-          {project.data.thumbnail && (
+          {thumb && (
             <a href={`/projects/${project.id.split('/').pop()?.replace(/\.md$/, '')}`} tabindex="-1" aria-hidden="true">
               <Thumbnail
-                src={project.data.thumbnail}
+                src={thumb.src}
                 position={project.data.thumbnailPosition}
                 variant="strip"
               />
@@ -69,7 +72,8 @@ const statusFallback = 't-muted b-border';
             </div>
           </div>
         </div>
-      ))}
+        );
+      })}
     </div>
   </section>
 </BaseLayout>
