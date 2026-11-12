@@ -8,17 +8,6 @@ start date: '2026-09-30'
 end date: '-'
 status: 'paused'
 relatedTag: 'project-e-reader'
-thumbnailCrop:
-  strip:
-    desktop:
-      x: 21.3
-      y: 50.9
-      zoom: 1
-      image: '../../blog/8/media/bedside-books.jpg'
-  hero:
-    desktop:
-      y: 16.4
-      image: '../../blog/8/media/sanderson-book-collection.jpg'
 ---
 
 I uh... Will write something later. I just needed a placeholder project for [this blog post](/blog/designing-and-printing-a-solution) 😅
