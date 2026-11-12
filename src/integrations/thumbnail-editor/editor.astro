@@ -33,8 +33,8 @@ function relatedImages(project: (typeof projects)[number]) {
         title: post.data.title + (post.data.draft ? ' (draft)' : ''),
         images: entryImages(post).map((i) => toImg(path.posix.relative(from, `${dir}/${i.path}`), i.src)),
       };
-    })
-    .filter((p) => p.images.length > 0);
+    });
+  // Posts without images are kept so the editor can say why there's nothing to pick.
 }
 
 const entries = [
@@ -47,7 +47,7 @@ const entries = [
   .map(({ e, collection, number }) => {
     const images = entryImages(e);
     const related = collection === 'projects' ? relatedImages(e as (typeof projects)[number]) : [];
-    if ((!images.length && !related.length) || !e.filePath) return undefined;
+    if ((!images.length && !related.some((p) => p.images.length)) || !e.filePath) return undefined;
     const auto = getThumbnail(e);
     const crop = e.data.thumbnailCrop as ThumbnailCrop | undefined;
     // Each thumbnail's explicitly set values, from whichever level of the frontmatter sets them.
@@ -96,7 +96,7 @@ const data = JSON.stringify({ entries, defaults: thumbnails, saveEndpoint: SAVE_
           </label>
           <label class="te-check font-mono" id="te-related-wrap" hidden>
             <input type="checkbox" id="te-related" />
-            <span>images from related blog posts <b id="te-related-count"></b></span>
+            <span id="te-related-label"></span>
           </label>
           <div class="te-actions">
             <button type="button" class="btn-outline" id="te-reset">Reset all</button>
@@ -218,9 +218,16 @@ const data = JSON.stringify({ entries, defaults: thumbnails, saveEndpoint: SAVE_
       const hash = `#entry=${encodeURIComponent(entry.key)}`;
       if (location.hash !== hash) history.replaceState(null, '', hash);
       select.value = entry.key;
-      $('te-related-wrap').hidden = entry.related.length === 0;
-      $('te-related-count').textContent = `(${relatedImgs().length})`;
-      relatedBox.checked = showRelated.get(entry.key)!;
+      // Shown for any project with related posts; greyed out when none of them has images.
+      const nRelated = entry.related.length, nImgs = relatedImgs().length;
+      $('te-related-wrap').hidden = nRelated === 0;
+      $('te-related-wrap').classList.toggle('off', nImgs === 0);
+      relatedBox.disabled = nImgs === 0;
+      relatedBox.checked = nImgs > 0 && showRelated.get(entry.key)!;
+      const posts = `${nRelated} related blog post${nRelated === 1 ? '' : 's'}`;
+      $('te-related-label').textContent = nImgs
+        ? `images from related blog posts (${nImgs} from ${posts})`
+        : `${posts}, but none has images in its folder`;
 
       for (const card of cards) {
         const v = card.dataset.v as Variant, s = card.dataset.s as Screen;
@@ -412,6 +419,7 @@ const data = JSON.stringify({ entries, defaults: thumbnails, saveEndpoint: SAVE_
   .te-check { display: flex; align-items: center; gap: 0.45rem; font-size: 0.8rem; color: var(--muted); padding-bottom: 0.5rem; cursor: pointer; }
   .te-check[hidden] { display: none; }
   .te-check input { accent-color: var(--accent); }
+  .te-check.off { opacity: 0.6; cursor: default; }
   .te-field { display: flex; flex-direction: column; gap: 0.35rem; font-family: var(--font-mono); font-size: 0.8rem; color: var(--muted); }
   .te-field select { background: var(--surface); color: var(--text); border: 1px solid var(--border); border-radius: 0.5rem; padding: 0.45rem 0.6rem; width: 100%; }
   .te-zoom input { width: min(100%, 14rem); accent-color: var(--accent); }
