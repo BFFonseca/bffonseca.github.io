@@ -22,7 +22,7 @@ const args = Object.fromEntries(
   rest.flatMap((arg, i) => (arg.startsWith('--') ? [[arg.slice(2), rest[i + 1]?.startsWith('--') ? true : rest[i + 1] ?? true]] : [])),
 );
 if (!['build', 'assemble'].includes(command) || typeof args.store !== 'string') {
-  console.error('Usage: node scripts/versions.mjs <build|assemble> --store <dir> [--only <N,N>] [--retry-failed] [--out dist]');
+  console.error('Usage: node scripts/versions.mjs <build|assemble> --store <dir> [--release <rev>] [--only <N,N>] [--retry-failed] [--out dist]');
   process.exit(1);
 }
 
@@ -54,7 +54,10 @@ function mergedPRs() {
 }
 
 const treeOf = (rev) => git('rev-parse', `${rev}^{tree}`);
-const isRelease = (pr) => treeOf(pr.sha) === treeOf('HEAD');
+// The commit the release is built from. PR runs pass main's tip (HEAD^1 of GitHub's
+// test merge), so the newest merged PR still counts as the release there.
+const RELEASE = typeof args.release === 'string' ? args.release : 'HEAD';
+const isRelease = (pr) => treeOf(pr.sha) === treeOf(RELEASE);
 
 async function loadIndex() {
   try {
