@@ -107,3 +107,8 @@
 :root.light .prose-content thead th {
   background-color: rgba(0,0,0,0.03);
 }
+/* Thumbnails (see components/Thumbnail.astro) */
+.thumb { display: block; width: 100%; object-fit: cover; border: 1px solid var(--border); background-color: var(--surface); }
+.thumb-strip { height: 5rem; border-radius: 0.5rem; margin-bottom: 0.875rem; }
+.thumb-hero  { height: clamp(10rem, 40vw, 20rem); border-radius: 0.75rem; margin-bottom: 2rem; }
+@media (min-width: 768px) { .thumb-strip { height: 6rem; } }

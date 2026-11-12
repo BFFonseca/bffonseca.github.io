@@ -3,6 +3,8 @@ import { getCollection, render } from "astro:content";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import ProjectSidebar from "../../components/ProjectSidebar.astro";
 import ViewCount from "../../components/ViewCount.astro";
+import Thumbnail from "../../components/Thumbnail.astro";
+import { getThumbnail } from "../../lib/thumbnail";
 
 export async function getStaticPaths() {
   const projects = await getCollection("projects");
@@ -15,6 +17,7 @@ export async function getStaticPaths() {
 const { project } = Astro.props;
 const { Content } = await render(project);
 const title = `Project: ${project.data.title}`;
+const thumb = getThumbnail(project);
 
 // Fetch all blog posts
 const blogPosts = await getCollection("blog");
@@ -42,6 +45,16 @@ const relatedPosts = blogPosts
     </a>
 
     <article>
+      {
+        thumb && (
+          <Thumbnail
+            src={thumb.src}
+            alt={thumb.alt}
+            position={project.data.thumbnailPosition}
+            variant="hero"
+          />
+        )
+      }
       <h1 class="section-title text-4xl mb-4">{title}</h1>
       <ViewCount class="block mb-4" />
 
