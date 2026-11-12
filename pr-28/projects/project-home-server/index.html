@@ -1,0 +1,94 @@
+<!DOCTYPE html><html lang="en"><head><!-- Prevent theme flash --><script>
+      const saved = localStorage.getItem('theme');
+      if (saved === 'light') document.documentElement.classList.add('light');
+    </script><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="description" content="A Home Serve to run local LLMs, an AI harness and some other services. Maybe some videogame serves."><link rel="icon" type="image/svg+xml" href="/favicon.svg"><title>Project: Home Server · DebugLED</title><script type="module" src="/_astro/Analytics.astro_astro_type_script_index_0_lang.DhdlIi1a.js"></script><link rel="stylesheet" href="/_astro/BaseLayout.CodxQq63.css"></head><body class="min-h-screen flex flex-col bg-[var(--bg)] overflow-x-hidden"><!-- Full-width sticky header wrapper --><header class="py-6 border-b b-border sticky top-0 bg-[var(--bg)]/90 backdrop-blur z-50"><div class="w-full max-w-4xl mx-auto px-6"><nav class="w-full flex items-center justify-between" data-astro-cid-wpvy4v7s><a href="/" class="font-mono font-medium text-lg tracking-tight" style="color: var(--accent);" data-astro-cid-wpvy4v7s>Debug<span style="color: var(--text);" data-astro-cid-wpvy4v7s>LED</span></a><div class="flex items-center gap-6" data-astro-cid-wpvy4v7s><ul class="flex items-center gap-6" data-astro-cid-wpvy4v7s><li data-astro-cid-wpvy4v7s><a href="/" class="nav-link " data-astro-cid-wpvy4v7s>home</a></li><li data-astro-cid-wpvy4v7s><a href="/projects" class="nav-link " data-astro-cid-wpvy4v7s>projects</a></li><li data-astro-cid-wpvy4v7s><a href="/blog" class="nav-link " data-astro-cid-wpvy4v7s>blog</a></li><li data-astro-cid-wpvy4v7s><a href="/about" class="nav-link " data-astro-cid-wpvy4v7s>about</a></li></ul><!-- Dark/Light mode toggle --><button id="theme-toggle" aria-label="Toggle light/dark mode" class="font-mono text-xs px-3 py-1.5 rounded-lg border transition-all duration-200 flex-shrink-0" style="border-color: var(--border); color: var(--muted);" data-astro-cid-wpvy4v7s><span id="theme-icon" data-astro-cid-wpvy4v7s>☀️</span></button></div></nav><script type="module">var e=document.documentElement,t=document.getElementById(`theme-toggle`),n=document.getElementById(`theme-icon`);localStorage.getItem(`theme`)===`light`&&(e.classList.add(`light`),n&&(n.textContent=`🌙`)),t?.addEventListener(`click`,()=>{let t=e.classList.toggle(`light`);localStorage.setItem(`theme`,t?`light`:`dark`),n&&(n.textContent=t?`🌙`:`☀️`)});</script></div></header><!-- Main Content Wrapper --><div class="relative w-full max-w-4xl mx-auto px-6 flex-1 flex flex-col"><main class="flex-1 w-full py-16"><div class="mb-20"><a href="/projects" class="text-sm font-mono t-muted hover-accent transition-colors mb-8 inline-block">← back to projects</a><article><h1 class="section-title text-4xl mb-4">Project: Home Server</h1><script type="module" src="/_astro/ViewCount.astro_astro_type_script_index_0_lang.B3QCgJNH.js"></script><div class="flex flex-wrap gap-2 mb-6"><span class="whitespace-nowrap font-mono text-xs t-accent b-accent border px-2 py-1 rounded">Hardware</span><span class="whitespace-nowrap font-mono text-xs t-accent b-accent border px-2 py-1 rounded">AI</span><span class="whitespace-nowrap font-mono text-xs t-accent b-accent border px-2 py-1 rounded">Self-Host</span></div><div class="prose-content"><h2 id="why-do-i-do-this-to-myself">Why do I do this to myself?</h2>
+<p>I’ve wanted to self host stuff for quite some time. It’s one of the reasons I started this website. I want to actually own stuff, set it up, know how it works, figure out what’s wrong with it and fix it.</p>
+<p>At the same time, it feels like a lot of work. I guess because it is. Some say that’s part of the fun. I call those of us that do “crazy”, or “dreamers” depending on the day.</p>
+<p>Ever since learning about AI Harnesses a few months ago, I’ve been interested in them. They seem like a really powerfull tool. The more I thought about it, the more sense it made to host one in a 24/7 server that I could access any time from any of my machines (PC, laptop or raspberry).</p>
+<p>As a side, not so side, benefit: I can host some video game servers to play with friends 😀</p>
+<p>I initially thought about hosting this in an old RaspberryPi 3B+ or in my current mini-server RaspberryPi 4B. But this would be running very tight and with not much room for anything else. Worse yet, it would probably trottle my home network because of the Pihole’s DNS running on it. We really don’t want that.</p>
+<h2 id="now-what-to-do-what-to-do">Now, what to do… What to do?</h2>
+<p>I’ve considered buying a mini-pc and going from there, but the price really put me off. I don’t really have 400-700€ spare right now for a “silly little project” that I would probably not take full advantage of.</p>
+<p>Fast forward to now, and I’ve got some really great spare PC parts lying around from my recent desktop upgrade plus some other older PCs.</p>
+<p>So, right now all I’m missing is a case, a CPU cooler and some storage. Maybe some more RAM. From what I’ve researched, I’m looking at maybe 100-200€ investment for a beefy server that will take care of everything I want and then some!</p>
+<h2 id="the-setup">The Setup</h2>
+<p>After a lot (and I mean <strong>A LOT</strong>) of back-and-forward with Claude discussing possible options for case, cpu cooler and motherboard (for mATX or mITX builds), I’ve come down to two options:</p>
+<ul>
+<li>ATX build: I only get a case</li>
+<li>mATX or mITX: I get a case and a motherboard</li>
+</ul>
+<p>Other than that, I only needed some storage, a cpu cooler and maybe a RAM upgrade.</p>
+<p>I ended up getting a 2nd hand small ATX case (CoolerMaster Q500L) and took an NMVe M.2 SSD from my Desktop that wasn’t being used.</p>
+<p>Here’s the spec list for the server right now:</p>
+<table>
+<thead>
+<tr>
+<th>Component</th>
+<th>Part</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Motherboard</td>
+<td>MSI MPG B550 Gaming Plus (AM4)</td>
+</tr>
+<tr>
+<td>CPU</td>
+<td>AMD Ryzen 5 5600X</td>
+</tr>
+<tr>
+<td>CPU Cooler</td>
+<td>Thermalright Peerless Assassin 120 SE</td>
+</tr>
+<tr>
+<td>GPU</td>
+<td>MSI Radeon RX 580 Armor 8GB OC</td>
+</tr>
+<tr>
+<td>RAM</td>
+<td>G.Skill Aegis DDR4-3200 CL16 2×8GB</td>
+</tr>
+<tr>
+<td>PSU</td>
+<td>OCZ700MXSP 700W</td>
+</tr>
+<tr>
+<td>Storage</td>
+<td>NVMe for OS + services (256GB)</td>
+</tr>
+<tr>
+<td>Case</td>
+<td>CoolerMaster Q500L</td>
+</tr>
+<tr>
+<td>OS</td>
+<td>Ubuntu Server 26.04.1 LTS</td>
+</tr>
+</tbody>
+</table>
+<p>This is an already very beefy setup, with minimal investment. A very big step-up from a mini computer in terms of specs.</p>
+<p>Not wanting to spend much on this project, I ended up going with the parts I had and just got the smallest ATX case I could find.</p>
+<p>I would love to upgrade this to 16Gb RAM but <em>have you seen memory prices lately?!</em> It’s insane. Even second hand is expensive (not to mention unreliable). Maybe in a couple years or so.</p>
+<h2 id="current-state">Current State</h2>
+<p>The server is assembled and running! So far, this is what’s done:</p>
+<ul>
+<li>Installed Ubuntu Server 26.04.1 (autoinstall, ZFS root on the SN750); SSH key auth, static IP via DHCP reservation</li>
+<li>First <code>apt upgrade</code> after a pre-upgrade snapshot</li>
+<li>Short power-button press ignored via logind drop-in to prevent misclick shutdowns</li>
+<li><code>presnap</code> script for recursive root + boot snapshots</li>
+<li>Fixed hidden journal (flush waits for <code>zfs-mount</code>)</li>
+<li>Rehearsed offline rollback from Ventoy live ISO ✔</li>
+<li>Built headless recovery: dracut-sshd in initramfs + <code>recovery-reboot</code> (kexec) + <code>zrollback</code>; full SSH rollback rehearsed ✔</li>
+<li>Wrote the recovery runbook</li>
+<li>Configured Claude Code to run auto in a safe(ish) mode</li>
+<li>llama.cpp (Vulkan) as localhost systemd service; Qwen3-4B-Instruct-2507 + Qwen3-8B</li>
+</ul>
+<h2 id="whats-next">What’s Next</h2>
+<ul>
+<li>Repaste GPU and maybe get better case fans</li>
+<li>Finish configuring Hermes to run both llama models and Claude Code</li>
+<li>Install Tailscale for remote access</li>
+<li>ZFS ARC cap so the server doesn’t run OOM</li>
+<li>ZFS <code>copies=2</code> so there’s some sort of fallback for a bad sector</li>
+</ul>
+</div></article><!-- Mobile Sidebar --><aside class="block 2xl:hidden mt-16 pt-8 border-t b-border"><div class=""><p class="text-sm font-semibold mb-4 t-muted font-display uppercase tracking-wider">Blog posts about this project</p><ul class="space-y-4"><li><a href="/blog/update-automation-and-planning" class="block group"><h4 class="font-medium text-sm group-hover-accent transition-colors t-text mb-1">Update, Automation and Planning</h4><time class="text-[0.65rem] t-muted font-mono block">2026-10-12</time></a></li><li><a href="/blog/summer-projects" class="block group"><h4 class="font-medium text-sm group-hover-accent transition-colors t-text mb-1">Summer Projects</h4><time class="text-[0.65rem] t-muted font-mono block">2026-07-20</time></a></li></ul></div></aside></div></main><aside class="hidden 2xl:block absolute top-0 left-full ml-8 w-64 pt-16 pl-6 border-l b-border opacity-80 hover:opacity-100 transition-opacity"><div class=""><p class="text-sm font-semibold mb-4 t-muted font-display uppercase tracking-wider">Blog posts about this project</p><ul class="space-y-4"><li><a href="/blog/update-automation-and-planning" class="block group"><h4 class="font-medium text-sm group-hover-accent transition-colors t-text mb-1">Update, Automation and Planning</h4><time class="text-[0.65rem] t-muted font-mono block">2026-10-12</time></a></li><li><a href="/blog/summer-projects" class="block group"><h4 class="font-medium text-sm group-hover-accent transition-colors t-text mb-1">Summer Projects</h4><time class="text-[0.65rem] t-muted font-mono block">2026-07-20</time></a></li></ul></div></aside></div><!-- Full-width footer wrapper --><div class="border-t b-border mt-auto"><div class="w-full max-w-4xl mx-auto px-6"><footer class="py-8 w-full flex flex-col sm:flex-row items-center justify-between gap-4 text-sm font-mono t-muted"><span>© 2026 DebugLED</span><div class="flex items-center gap-5"><a href="https://github.com/BFFonseca" target="_blank" rel="noopener" class="hover-accent transition-colors">GitHub</a><a href="https://www.linkedin.com/in/brunoriofonseca/" target="_blank" rel="noopener" class="hover-accent transition-colors">LinkedIn</a><a href="/contact" class="hover-accent transition-colors">Contact</a></div></footer></div></div></body></html>

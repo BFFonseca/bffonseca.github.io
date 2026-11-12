@@ -1,0 +1,242 @@
+{
+  "1": {
+    "number": 1,
+    "sha": "ac3cd894d1263f26972a18d3d5b857f71749cb85",
+    "date": "2026-03-20T20:08:36Z",
+    "branch": "light-mode",
+    "title": "Fix Header 1 color in Lightmode",
+    "status": "ok"
+  },
+  "2": {
+    "number": 2,
+    "sha": "c87674b3eb27dc8accf7f3ee1222ba6b276204ae",
+    "date": "2026-03-24T15:48:52Z",
+    "branch": "light-mode",
+    "title": "Add lightmode button to home page",
+    "status": "ok"
+  },
+  "3": {
+    "number": 3,
+    "sha": "6dcafe39f5766efeab28c9f9fd9502953ac50dbc",
+    "date": "2026-03-25T16:09:57Z",
+    "branch": "light-mode",
+    "title": "Fix flash of unstyled content (FOUC)",
+    "status": "ok"
+  },
+  "5": {
+    "number": 5,
+    "sha": "468e5bd78f154d92c6a761174c4ba7c3ca258d78",
+    "date": "2026-06-16T16:08:10+01:00",
+    "branch": "update-projects",
+    "title": "Update projects",
+    "status": "ok"
+  },
+  "6": {
+    "number": 6,
+    "sha": "aa83212c2c4385daa40a981d3af9de55ec060baf",
+    "date": "2026-06-16T16:18:30+01:00",
+    "branch": "content-update",
+    "title": "Content update",
+    "status": "ok"
+  },
+  "7": {
+    "number": 7,
+    "sha": "6fc2a5be69f97bc352d483e90e91818d32b9c3fa",
+    "date": "2026-06-16T16:27:05+01:00",
+    "branch": "content-update",
+    "title": "Publish blog post 2",
+    "status": "ok"
+  },
+  "8": {
+    "number": 8,
+    "sha": "6ec2f1385ef99d761f39ebab093cc1dac3f25304",
+    "date": "2026-07-20T23:12:08+01:00",
+    "branch": "content-update",
+    "title": "Content update",
+    "status": "failed"
+  },
+  "9": {
+    "number": 9,
+    "sha": "8b63cf3762b62b36ab5eaafe3bdc15eb3256dd2a",
+    "date": "2026-10-14T21:08:14+01:00",
+    "branch": "content-update",
+    "title": "Update projects, fix UI and add blog post 6",
+    "status": "ok"
+  },
+  "11": {
+    "number": 11,
+    "sha": "f4f76e4f6213bbdc3230cb884728c67847b1ae72",
+    "date": "2026-10-15T14:26:21+01:00",
+    "branch": "cicd-update",
+    "title": "CI: fix deploy-pages version (v5)",
+    "status": "ok"
+  },
+  "12": {
+    "number": 12,
+    "sha": "8ece6c5e1785d4c283cfe319570a3a3795ed8957",
+    "date": "2026-10-15T16:34:34+01:00",
+    "branch": "deps-update",
+    "title": "Deps update",
+    "status": "ok"
+  },
+  "13": {
+    "number": 13,
+    "sha": "1a1fd69a091ce6023e5b3c2cac2eb66ade853aeb",
+    "date": "2026-10-15T18:27:15+01:00",
+    "branch": "content-update",
+    "title": "Content update",
+    "status": "ok"
+  },
+  "14": {
+    "number": 14,
+    "sha": "723364ac8a06055ba3a239531ca1f813a8116b2d",
+    "date": "2026-10-15T18:33:25+01:00",
+    "branch": "content-update",
+    "title": "Fix broken link",
+    "status": "ok"
+  },
+  "15": {
+    "number": 15,
+    "sha": "b0439886dcc941f37f90deaf974b0e664c328676",
+    "date": "2026-10-15T18:47:08+01:00",
+    "branch": "content-update",
+    "title": "Content update",
+    "status": "ok"
+  },
+  "16": {
+    "number": 16,
+    "sha": "d0d0a8a6289b65075a4771a10a33fe21c4ea2aee",
+    "date": "2026-10-27T14:55:24Z",
+    "branch": "content-update",
+    "title": "Add blog post 8",
+    "status": "ok"
+  },
+  "17": {
+    "number": 17,
+    "sha": "61b89481cc958a43d7b260f376c4c5ea96230dda",
+    "date": "2026-10-27T14:57:24Z",
+    "branch": "content-update",
+    "title": "Fix image link",
+    "status": "ok"
+  },
+  "18": {
+    "number": 18,
+    "sha": "6ff4920c271e01f21954cc6ba6712830c6f7bfcd",
+    "date": "2026-10-27T15:29:34Z",
+    "branch": "content-update",
+    "title": "Fix broken links from old content",
+    "status": "ok"
+  },
+  "19": {
+    "number": 19,
+    "sha": "9e4f33bcb76f16ca93c36efa52f41ac2528f5575",
+    "date": "2026-10-27T15:57:43Z",
+    "branch": "ci-checks",
+    "title": "Add type check and internal link check to CI",
+    "status": "ok"
+  },
+  "20": {
+    "number": 20,
+    "sha": "318a1d4e9620a2c439c572f6a4e61e41672c2e47",
+    "date": "2026-10-29T12:07:07Z",
+    "branch": "content-update",
+    "title": "Content update",
+    "status": "ok"
+  },
+  "21": {
+    "number": 21,
+    "sha": "6d12310b0c43ee3d87454b06415a678f9ba42a80",
+    "date": "2026-10-29T12:35:14Z",
+    "branch": "giscus-comments",
+    "title": "Add Giscus comments to blog posts",
+    "status": "ok"
+  },
+  "23": {
+    "number": 23,
+    "sha": "e6a6d1e9b726ded61a64bf21d0c047d1da881662",
+    "date": "2026-10-29T13:38:55Z",
+    "branch": "home-carousel",
+    "title": "Home page: replace About with latest project/post carousel",
+    "status": "ok"
+  },
+  "25": {
+    "number": 25,
+    "sha": "b82578f9c21ee7eda13b7b8ca08267934897341d",
+    "date": "2026-10-29T13:31:28Z",
+    "branch": "content-update",
+    "title": "Update the landing and about pages",
+    "status": "ok"
+  },
+  "26": {
+    "number": 26,
+    "sha": "07a4e1d02a6080c40a512e308255273525271728",
+    "date": "2026-10-29T13:31:46Z",
+    "branch": "giscus-origins",
+    "title": "Restrict Giscus embedding to debugled.com and localhost",
+    "status": "ok"
+  },
+  "27": {
+    "number": 27,
+    "sha": "41e8d7a7b72b79e4dd75cc87b693ab7ebfc4b2d5",
+    "date": "2026-11-09T21:06:23Z",
+    "branch": "carousel-touch-pause",
+    "title": "Stop carousel autoplay after a touch",
+    "status": "ok"
+  },
+  "28": {
+    "number": 28,
+    "sha": "49b76986ab4daa93619435da0f954a864d978d2a",
+    "date": "2026-11-09T21:20:34Z",
+    "branch": "analytics",
+    "title": "Add GoatCounter analytics and view counts (disabled by default)",
+    "status": "ok"
+  },
+  "29": {
+    "number": 29,
+    "sha": "abeb97bcc0283994108bd84878eaeb872aa1f655",
+    "date": "2026-11-09T21:20:42Z",
+    "branch": "header-fit-mobile",
+    "title": "Fit header on phones: drop home link, move About to footer",
+    "status": "ok"
+  },
+  "30": {
+    "number": 30,
+    "sha": "a24c62945b7d78b434a731307bf9579e97d32a9c",
+    "date": "2026-11-09T21:43:59Z",
+    "branch": "nav-highlight-muted",
+    "title": "Fix current-page nav highlight and brighten dark muted text",
+    "status": "ok"
+  },
+  "31": {
+    "number": 31,
+    "sha": "8ad544a0a8859a1b1c67a16572cc680aaea0ecc5",
+    "date": "2026-11-12T15:14:58Z",
+    "branch": "post-image-carousel",
+    "title": "Add image carousels for blog posts and project pages",
+    "status": "ok"
+  },
+  "32": {
+    "number": 32,
+    "sha": "cc4c1ef0affdd9d7c8a47dc69420aac32681ca78",
+    "date": "2026-11-12T15:11:51Z",
+    "branch": "thumbnails",
+    "title": "Add optional thumbnails for blog posts and projects",
+    "status": "ok"
+  },
+  "33": {
+    "number": 33,
+    "sha": "4abc0b6fe693a6eb945afaf31d03e3944a4a4bfc",
+    "date": "2026-11-12T15:52:25Z",
+    "branch": "thumbnail-crop",
+    "title": "Configurable thumbnail crop + interactive crop editor",
+    "status": "ok"
+  },
+  "34": {
+    "number": 34,
+    "sha": "97166e4ddb8e7b3d021813b88e4ced74f9a5d784",
+    "date": "2026-11-12T16:27:14Z",
+    "branch": "content-update",
+    "title": "Content update",
+    "status": "ok"
+  }
+}
