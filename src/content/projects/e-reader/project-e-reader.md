@@ -8,6 +8,25 @@ start date: '2026-09-30'
 end date: '-'
 status: 'paused'
 relatedTag: 'project-e-reader'
+thumbnailCrop:
+  strip:
+    desktop:
+      y: 43.8
+      image: '../../blog/8/media/epaper-clock.jpg'
+    mobile:
+      y: 55
+      image: '../../blog/8/media/epaper-clock.jpg'
+  hero:
+    desktop:
+      x: 48
+      y: 55.7
+      zoom: 1.21
+      image: '../../blog/8/media/epaper-clock.jpg'
+    mobile:
+      x: 50.4
+      y: 52.2
+      zoom: 1.61
+      image: '../../blog/8/media/epaper-clock.jpg'
 ---
 
 I uh... Will write something later. I just needed a placeholder project for [this blog post](/blog/designing-and-printing-a-solution) 😅

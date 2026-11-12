@@ -8,6 +8,17 @@ start date: '2026-06-04'
 end date: '2026-08-20'
 status: 'complete'
 relatedTag: 'project-switch-review'
+thumbnailCrop:
+  strip:
+    desktop:
+      image: 'none'
+    mobile:
+      image: 'none'
+  hero:
+    desktop:
+      image: 'none'
+    mobile:
+      image: 'none'
 ---
 
 ## The Task

@@ -4,6 +4,14 @@ description: "📚 I love reading. I don't love bringing a 1200 page book everyw
 date: '2026-10-27'
 tags: ['hardware', 'sourcing', 'epaper-display', 'books', 'project-e-reader']
 draft: false
+thumbnailCrop:
+  hero:
+    desktop:
+      y: 80.3
+      image: 'media/sanderson-book-collection.jpg'
+    mobile:
+      y: 90.2
+      image: 'media/sanderson-book-collection.jpg'
 ---
 This one is, ironically, a bit of a read. Might have gotten carried away writting about a topic I like. *Whoops*
 

@@ -4,6 +4,17 @@ description: 'The obligatory first post. Why I started this site and what to exp
 date: '2026-03-25'
 tags: ['software', 'AI', 'Claude', 'website', 'Astro', 'project-debugled']
 draft: false
+thumbnailCrop:
+  strip:
+    desktop:
+      image: 'none'
+    mobile:
+      image: 'none'
+  hero:
+    desktop:
+      image: 'none'
+    mobile:
+      image: 'none'
 ---
 Welcome to DebugLED. This is the first post and in it I will be telling you why I started this website and how.
 

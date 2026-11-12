@@ -4,6 +4,17 @@ description: 'The time as come! We are going live!'
 date: '2026-07-21'
 tags: ['website', 'software', 'milestone', 'project-debugled']
 draft: false
+thumbnailCrop:
+  strip:
+    desktop:
+      image: 'none'
+    mobile:
+      image: 'none'
+  hero:
+    desktop:
+      image: 'none'
+    mobile:
+      image: 'none'
 ---
 
 ## It's alive!!

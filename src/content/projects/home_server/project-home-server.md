@@ -6,6 +6,29 @@ start date: '2026-06-25'
 end date: '-'
 status: 'live'
 relatedTag: 'project-home-server'
+thumbnailCrop:
+  strip:
+    desktop:
+      x: 0
+      y: 10.3
+      zoom: 1
+      image: '../../blog/7/media/server-dashboard.png'
+    mobile:
+      x: 0
+      y: 8.2
+      zoom: 1.46
+      image: '../../blog/7/media/server-dashboard.png'
+  hero:
+    desktop:
+      x: 0
+      y: 0
+      zoom: 1.15
+      image: '../../blog/7/media/server-dashboard.png'
+    mobile:
+      x: 0
+      y: 0
+      zoom: 1.51
+      image: '../../blog/7/media/server-dashboard.png'
 ---
 ## Why do I do this to myself?
 
