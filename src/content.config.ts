@@ -2,15 +2,22 @@ import { defineCollection } from 'astro:content';
 import { glob } from 'astro/loaders';
 import { z } from 'astro/zod';
 
-// Per-entry thumbnail crop; any field left out falls back to the defaults in site.config.ts.
-const crop = z.object({
-  x:    z.number().min(0).max(100).optional(), // focal point, % from left
-  y:    z.number().min(0).max(100).optional(), // focal point, % from top
-  zoom: z.number().min(1).optional(),          // 1 = just fills the box
+// Per-entry thumbnail image + crop; anything left out falls back to the next level up and
+// finally to the defaults in site.config.ts. Levels, most specific first:
+//   thumbnailCrop.<strip|hero>.<desktop|mobile>  →  thumbnailCrop.<strip|hero>  →  thumbnailCrop
+const slot = z.object({
+  x:     z.number().min(0).max(100).optional(), // focal point, % from left
+  y:     z.number().min(0).max(100).optional(), // focal point, % from top
+  zoom:  z.number().min(1).optional(),          // 1 = just fills the box
+  image: z.string().optional(),                 // image path relative to the .md, e.g. media/photo.jpg
 });
-const thumbnailCrop = crop.extend({
-  strip: crop.optional(), // overrides for the index-card strip only
-  hero:  crop.optional(), // overrides for the post/project page banner only
+const variant = slot.extend({
+  desktop: slot.optional(), // screens 768px and wider
+  mobile:  slot.optional(), // narrower screens (phones)
+});
+const thumbnailCrop = slot.extend({
+  strip: variant.optional(), // the index-card strip
+  hero:  variant.optional(), // the banner at the top of the post/project page
 }).optional();
 
 const blog = defineCollection({

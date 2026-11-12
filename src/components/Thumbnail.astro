@@ -1,56 +1,65 @@
 ---
-// Thumbnail image for blog posts and projects (picked by lib/thumbnail.ts).
+// Thumbnail for a blog post or project.
 //   variant="strip" -> thin cropped preview strip used on index cards
 //   variant="hero"  -> full-width banner at the top of the post/project page
-// Crop = defaults from site.config.ts, then the entry's `thumbnailCrop`, then its
-// variant-specific `thumbnailCrop.strip` / `thumbnailCrop.hero`.
-import { Image } from 'astro:assets';
+// Image and crop are resolved separately for desktop (>= 768px) and phones, from the entry's
+// `thumbnailCrop` frontmatter and the defaults in site.config.ts (see lib/thumbnail.ts).
+// Renders nothing when the entry has no thumbnail.
+import { getImage } from 'astro:assets';
 import type { ImageMetadata } from 'astro';
+import type { CollectionEntry } from 'astro:content';
+import { resolveSlot, type Variant } from '../lib/thumbnail';
 import { thumbnails } from '../site.config';
 
-interface Crop {
-  x?: number;
-  y?: number;
-  zoom?: number;
-}
-
 interface Props {
-  src: ImageMetadata;
-  alt?: string;
-  crop?: Crop & { strip?: Crop; hero?: Crop };
-  variant: 'strip' | 'hero';
+  entry: CollectionEntry<'blog'> | CollectionEntry<'projects'>;
+  variant: Variant;
+  href?: string; // wrap the thumbnail in a (non-focusable) link
   class?: string;
 }
 
-const { src, alt = '', crop = {}, variant, class: className = '' } = Astro.props;
+const { entry, variant, href, class: className = '' } = Astro.props;
+const Wrapper = href ? 'a' : Fragment;
+const wrapperProps = href ? { href, tabindex: -1, 'aria-hidden': 'true' } : {};
 const isHero = variant === 'hero';
 const defaults = thumbnails[variant];
 
-const pick = (key: keyof Crop) => crop[variant]?.[key] ?? crop[key] ?? defaults[key];
-const x = pick('x');
-const y = pick('y');
-const zoom = pick('zoom');
+const desktop = resolveSlot(entry, variant, 'desktop', defaults);
+const mobile = resolveSlot(entry, variant, 'mobile', defaults);
 
-// With object-fit: cover, the image's x%/y% point lines up with the box's x%/y% point,
-// so using the same values for transform-origin zooms in around that focal point.
-const imgStyle = [
-  `object-position: ${x}% ${y}%`,
-  zoom !== 1 && `transform: scale(${zoom})`,
-  zoom !== 1 && `transform-origin: ${x}% ${y}%`,
-].filter(Boolean).join('; ');
+const widths = isHero ? [768, 1200, 1600] : [480, 768, 1200];
+const sizes = isHero ? '(min-width: 768px) 768px, 100vw' : '(min-width: 768px) 720px, 100vw';
+const optimise = (src: ImageMetadata) => getImage({ src, widths, sizes });
 
-const boxStyle = typeof defaults.height === 'string'
+const [desktopImg, mobileImg] = desktop && mobile
+  ? await Promise.all([optimise(desktop.src), desktop.src === mobile.src ? null : optimise(mobile.src)])
+  : [null, null];
+
+// Crop values go in CSS variables; global.css switches from the -sm to the -md set at 768px.
+const vars = (s: { x: number; y: number; zoom: number }, suffix: string) =>
+  `--tx-${suffix}: ${s.x}%; --ty-${suffix}: ${s.y}%; --tz-${suffix}: ${s.zoom}`;
+const height = typeof defaults.height === 'string'
   ? `--thumb-h-sm: ${defaults.height}`
   : `--thumb-h-sm: ${defaults.height.mobile}; --thumb-h-md: ${defaults.height.desktop}`;
+const style = desktop && mobile ? [height, vars(mobile, 'sm'), vars(desktop, 'md')].join('; ') : '';
 ---
 
-<div class:list={['thumb', isHero ? 'thumb-hero' : 'thumb-strip', className]} style={boxStyle}>
-  <Image
-    src={src}
-    alt={alt}
-    widths={isHero ? [768, 1200, 1600] : [480, 768, 1200]}
-    sizes={isHero ? '(min-width: 768px) 768px, 100vw' : '(min-width: 768px) 720px, 100vw'}
-    loading={isHero ? 'eager' : 'lazy'}
-    style={imgStyle}
-  />
-</div>
+{desktop && mobile && desktopImg && (
+  <Wrapper {...wrapperProps}>
+  <div class:list={['thumb', isHero ? 'thumb-hero' : 'thumb-strip', className]} style={style}>
+    <picture>
+      {mobileImg && <source media="(min-width: 768px)" srcset={desktopImg.srcSet.attribute} sizes={sizes} />}
+      <img
+        src={(mobileImg ?? desktopImg).src}
+        srcset={(mobileImg ?? desktopImg).srcSet.attribute}
+        sizes={sizes}
+        alt={mobile.alt}
+        width={(mobileImg ?? desktopImg).attributes.width}
+        height={(mobileImg ?? desktopImg).attributes.height}
+        loading={isHero ? 'eager' : 'lazy'}
+        decoding="async"
+      />
+    </picture>
+  </div>
+  </Wrapper>
+)}

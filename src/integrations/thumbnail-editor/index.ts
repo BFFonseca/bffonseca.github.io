@@ -10,33 +10,40 @@ import { fileURLToPath } from 'node:url';
 export const EDITOR_ROUTE = '/dev/thumbnails';
 export const SAVE_ENDPOINT = '/__thumbnail-editor/save';
 
-type Crop = { x?: number; y?: number; zoom?: number };
-type FullCrop = Crop & { strip?: Crop; hero?: Crop };
+type Slot = { x?: number; y?: number; zoom?: number; image?: string };
+type VariantCrop = Slot & { desktop?: Slot; mobile?: Slot };
+type FullCrop = Slot & { strip?: VariantCrop; hero?: VariantCrop };
 
-const KEYS = ['x', 'y', 'zoom'] as const;
-
-function clean(c: unknown): Crop {
-  const out: Crop = {};
-  if (!c || typeof c !== 'object') return out;
-  for (const k of KEYS) {
-    const v = (c as Record<string, unknown>)[k];
-    if (typeof v === 'number' && Number.isFinite(v)) {
-      out[k] = k === 'zoom' ? Math.min(10, Math.max(1, round(v, 2))) : Math.min(100, Math.max(0, round(v, 1)));
-    }
-  }
-  return out;
-}
-
+const NUM_KEYS = ['x', 'y', 'zoom'] as const;
 const round = (v: number, d: number) => Math.round(v * 10 ** d) / 10 ** d;
 
-function toYaml(crop: FullCrop): string[] {
+// Keep only valid values, rounded; image paths must stay inside the entry's folder.
+function slotLines(c: unknown, pad: string): string[] {
+  if (!c || typeof c !== 'object') return [];
+  const o = c as Record<string, unknown>;
   const lines: string[] = [];
-  const base = clean(crop);
-  for (const k of KEYS) if (base[k] !== undefined) lines.push(`  ${k}: ${base[k]}`);
+  for (const k of NUM_KEYS) {
+    const v = o[k];
+    if (typeof v !== 'number' || !Number.isFinite(v)) continue;
+    const val = k === 'zoom' ? Math.min(10, Math.max(1, round(v, 2))) : Math.min(100, Math.max(0, round(v, 1)));
+    lines.push(`${pad}${k}: ${val}`);
+  }
+  const img = o.image;
+  if (typeof img === 'string' && img && !img.split(/[\/]/).includes('..') && !path.isAbsolute(img)) {
+    lines.push(`${pad}image: '${img.replace(/'/g, "''")}'`);
+  }
+  return lines;
+}
+
+function toYaml(crop: FullCrop): string[] {
+  const lines = slotLines(crop, '  ');
   for (const v of ['strip', 'hero'] as const) {
-    const sub = clean(crop[v]);
-    const subLines = KEYS.filter((k) => sub[k] !== undefined).map((k) => `    ${k}: ${sub[k]}`);
-    if (subLines.length) lines.push(`  ${v}:`, ...subLines);
+    const vl = slotLines(crop?.[v], '    ');
+    for (const s of ['desktop', 'mobile'] as const) {
+      const sl = slotLines(crop?.[v]?.[s], '      ');
+      if (sl.length) vl.push(`    ${s}:`, ...sl);
+    }
+    if (vl.length) lines.push(`  ${v}:`, ...vl);
   }
   return lines.length ? ['thumbnailCrop:', ...lines] : [];
 }

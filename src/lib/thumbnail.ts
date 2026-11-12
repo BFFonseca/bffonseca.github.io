@@ -73,3 +73,65 @@ export function getThumbnail(entry: CollectionEntry<'blog'> | CollectionEntry<'p
   }
   return last;
 }
+
+// ---------------------------------------------------------------------------------------------
+// Per-slot resolution. A thumbnail has four slots: strip/hero × desktop/mobile. Each slot's
+// image and crop come from the most specific `thumbnailCrop` level that sets them:
+//   thumbnailCrop.<variant>.<screen>  →  thumbnailCrop.<variant>  →  thumbnailCrop  →  defaults
+// (image falls back to the automatic thumbnail picked by getThumbnail above).
+
+export type Variant = 'strip' | 'hero';
+export type Screen = 'desktop' | 'mobile';
+type Entry = CollectionEntry<'blog'> | CollectionEntry<'projects'>;
+
+export interface SlotCrop { x?: number; y?: number; zoom?: number; image?: string }
+export interface VariantCrop extends SlotCrop { desktop?: SlotCrop; mobile?: SlotCrop }
+export interface ThumbnailCrop extends SlotCrop { strip?: VariantCrop; hero?: VariantCrop }
+
+export const VARIANTS: Variant[] = ['strip', 'hero'];
+export const SCREENS: Screen[] = ['desktop', 'mobile'];
+
+export function entryDir(entry: Entry): string | undefined {
+  return entry.filePath ? normalise(entry.filePath.replace(/\\/g, '/').replace(/\/[^/]*$/, '')) : undefined;
+}
+
+// Every image stored in the entry's folder (any depth), as paths relative to that folder.
+export function entryImages(entry: Entry): { path: string; src: ImageMetadata }[] {
+  const dir = entryDir(entry);
+  if (!dir) return [];
+  return Object.keys(images)
+    .filter((k) => k.startsWith(dir + '/'))
+    .sort()
+    .map((k) => ({ path: k.slice(dir.length + 1), src: images[k] }));
+}
+
+// The `thumbnailCrop` levels that apply to a slot, most specific first.
+export function slotLevels(crop: ThumbnailCrop | undefined, v: Variant, s: Screen): SlotCrop[] {
+  const c = crop ?? {};
+  return [c[v]?.[s], c[v], c].filter((l): l is SlotCrop => !!l);
+}
+
+export interface Slot { src: ImageMetadata; alt: string; x: number; y: number; zoom: number }
+
+export function resolveSlot(
+  entry: Entry,
+  v: Variant,
+  s: Screen,
+  defaults: { x: number; y: number; zoom: number },
+): Slot | undefined {
+  const levels = slotLevels(entry.data.thumbnailCrop as ThumbnailCrop | undefined, v, s);
+  const pick = <K extends keyof SlotCrop>(k: K) => levels.find((l) => l[k] !== undefined)?.[k];
+  const auto = getThumbnail(entry);
+  const dir = entryDir(entry);
+  const chosen = pick('image');
+  const key = chosen && dir ? normalise(`${dir}/${chosen}`) : undefined;
+  const src = (key && images[key]) || auto?.src;
+  if (!src) return undefined;
+  return {
+    src,
+    alt: entry.data.thumbnailAlt ?? auto?.alt ?? '',
+    x: pick('x') ?? defaults.x,
+    y: pick('y') ?? defaults.y,
+    zoom: pick('zoom') ?? defaults.zoom,
+  };
+}

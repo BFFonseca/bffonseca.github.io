@@ -107,9 +107,17 @@
 :root.light .prose-content thead th {
   background-color: rgba(0,0,0,0.03);
 }
-/* Thumbnails (see components/Thumbnail.astro; sizes and default crop live in site.config.ts) */
+/* Thumbnails (see components/Thumbnail.astro; sizes and default crop live in site.config.ts).
+   Crop values arrive as CSS variables: -sm for phones, -md from 768px up. */
 .thumb { display: block; width: 100%; height: var(--thumb-h-sm); overflow: hidden; border: 1px solid var(--border); background-color: var(--surface); }
-.thumb img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.thumb picture { display: block; width: 100%; height: 100%; }
+.thumb img {
+  display: block; width: 100%; height: 100%; object-fit: cover;
+  object-position: var(--tx-sm) var(--ty-sm); transform-origin: var(--tx-sm) var(--ty-sm); transform: scale(var(--tz-sm));
+}
 .thumb-strip { border-radius: 0.5rem; margin-bottom: 0.875rem; }
 .thumb-hero  { border-radius: 0.75rem; margin-bottom: 2rem; }
-@media (min-width: 768px) { .thumb { height: var(--thumb-h-md, var(--thumb-h-sm)); } }
+@media (min-width: 768px) {
+  .thumb { height: var(--thumb-h-md, var(--thumb-h-sm)); }
+  .thumb img { object-position: var(--tx-md) var(--ty-md); transform-origin: var(--tx-md) var(--ty-md); transform: scale(var(--tz-md)); }
+}
