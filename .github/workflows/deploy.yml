@@ -47,6 +47,7 @@ jobs:
       # Version history: a frozen copy of the site per merged PR, at /versions/pr-<N>/.
       # Builds are kept on the `versions` branch, so each PR is only built once.
       # PR runs build and assemble too (so they test it) but only main saves.
+      # RELEASE: on PR runs HEAD is GitHub's test merge, so main's tip is HEAD^1.
       - name: Check out saved versions
         run: |
           if git ls-remote --exit-code --heads origin versions > /dev/null; then
@@ -57,7 +58,9 @@ jobs:
           fi
 
       - name: Build new versions
-        run: node scripts/versions.mjs build --store .versions-store
+        env:
+          RELEASE: ${{ github.event_name == 'pull_request' && 'HEAD^1' || 'HEAD' }}
+        run: node scripts/versions.mjs build --store .versions-store --release "$RELEASE"
 
       - name: Save new versions
         if: github.event_name != 'pull_request'
@@ -72,7 +75,9 @@ jobs:
           fi
 
       - name: Add versions to site
-        run: node scripts/versions.mjs assemble --store .versions-store
+        env:
+          RELEASE: ${{ github.event_name == 'pull_request' && 'HEAD^1' || 'HEAD' }}
+        run: node scripts/versions.mjs assemble --store .versions-store --release "$RELEASE"
 
       - name: Upload artifact
         if: github.event_name != 'pull_request'
