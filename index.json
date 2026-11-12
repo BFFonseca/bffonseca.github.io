@@ -254,5 +254,13 @@
     "branch": "version-history",
     "title": "Add version history: browse the site at each merged PR",
     "status": "ok"
+  },
+  "38": {
+    "number": 38,
+    "sha": "3335868f49820fa02da50da7cc571851ca1d10f6",
+    "date": "2026-11-12T18:01:44Z",
+    "branch": "versions-pr-release",
+    "title": "Version history: don't rebuild the newest PR on PR runs",
+    "status": "ok"
   }
 }
