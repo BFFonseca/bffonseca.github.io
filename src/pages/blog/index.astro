@@ -2,6 +2,7 @@
 import { getCollection } from "astro:content";
 import type { CollectionEntry } from "astro:content";
 import BaseLayout from "../../layouts/BaseLayout.astro";
+import Thumbnail from "../../components/Thumbnail.astro";
 
 // Posts live in numbered folders (e.g. content/blog/4/summer-projects.md),
 // so the first path segment of the id is the post number.
@@ -38,6 +39,13 @@ const posts = allPosts.sort(
                     {post.data.date}
                   </time>
                 </div>
+                {post.data.thumbnail && (
+                  <Thumbnail
+                    src={post.data.thumbnail}
+                    position={post.data.thumbnailPosition}
+                    variant="strip"
+                  />
+                )}
                 <p class="t-muted text-sm leading-relaxed mb-4">
                   {post.data.description}
                 </p>

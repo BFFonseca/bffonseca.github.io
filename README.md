@@ -63,6 +63,9 @@ public/
   date:        string       // "YYYY-MM-DD"
   tags:        string[]     // optional
   draft:       boolean      // optional, defaults to false
+  thumbnail:         image   // optional – path relative to the .md, e.g. ./media/thumb.jpg
+  thumbnailAlt:      string  // optional – alt text for the thumbnail
+  thumbnailPosition: string  // optional – CSS object-position for cropping, e.g. "center 30%"
 }
 ```
 
@@ -77,10 +80,15 @@ public/
   live:        string       // optional – live URL
   status:      'planned' | 'active' | 'live' | 'paused' | 'complete'
   relatedTag:  string       // optional – links to blog posts with this tag
+  thumbnail:         image   // optional – path relative to the .md, e.g. ./media/thumb.jpg
+  thumbnailAlt:      string  // optional – alt text for the thumbnail
+  thumbnailPosition: string  // optional – CSS object-position for cropping, e.g. "center 30%"
 }
 ```
 
 Each project lives in its own subfolder and can include a `media/` directory for images referenced in its Markdown content. The same pattern applies to blog posts.
+
+A `thumbnail` shows as a thin cropped strip between the title and description on the `/blog` and `/projects` index cards, and as a full-width banner (capped at 20rem tall) at the top of the post or project page. Use `thumbnailPosition` to choose which part of the image stays visible when it's cropped.
 
 ## Deployment
 
