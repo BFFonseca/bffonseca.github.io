@@ -2,6 +2,8 @@
 // The logo links home and About lives in the footer, which keeps the header
 // narrow enough for 360px phones.
 const navLinks = [
+  // Dev tools page, only while running `npm run dev` (never in the built site).
+  ...(import.meta.env.DEV ? [{ href: '/dev', label: 'dev' }] : []),
   { href: '/projects', label: 'projects' },
   { href: '/blog',     label: 'blog'     },
 ];

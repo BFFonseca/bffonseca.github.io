@@ -5,7 +5,6 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
 import Comments from "../../components/Comments.astro";
 import ViewCount from "../../components/ViewCount.astro";
 import Thumbnail from "../../components/Thumbnail.astro";
-import { getThumbnail } from "../../lib/thumbnail";
 
 export async function getStaticPaths() {
   const posts = await getCollection("blog", ({ data }) => !data.draft);
@@ -17,8 +16,7 @@ export async function getStaticPaths() {
 
 const { post, slug } = Astro.props;
 const { Content } = await render(post);
-const { title, description, date, tags, thumbnailCrop } = post.data;
-const thumb = getThumbnail(post);
+const { title, description, date, tags } = post.data;
 ---
 
 <BaseLayout title={title} description={description}>
@@ -30,11 +28,7 @@ const thumb = getThumbnail(post);
       ← back to blog
     </a>
 
-    {
-      thumb && (
-        <Thumbnail src={thumb.src} alt={thumb.alt} crop={thumbnailCrop} variant="hero" />
-      )
-    }
+    <Thumbnail entry={post} variant="hero" />
 
     <header class="mb-10">
       <div class="flex flex-wrap gap-2 mb-4">

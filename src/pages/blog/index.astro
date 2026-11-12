@@ -3,7 +3,6 @@ import { getCollection } from "astro:content";
 import type { CollectionEntry } from "astro:content";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import Thumbnail from "../../components/Thumbnail.astro";
-import { getThumbnail } from "../../lib/thumbnail";
 
 // Posts live in numbered folders (e.g. content/blog/4/summer-projects.md),
 // so the first path segment of the id is the post number.
@@ -30,7 +29,6 @@ const posts = allPosts.sort(
         <div class="flex flex-col gap-6">
           {posts.map((post) => {
             const slug = post.id.split("/").pop()?.replace(/\.md$/, "");
-            const thumb = getThumbnail(post);
             return (
               <a href={`/blog/${slug}`} class="card group block">
                 <div class="flex items-start justify-between gap-4 mb-2">
@@ -41,13 +39,7 @@ const posts = allPosts.sort(
                     {post.data.date}
                   </time>
                 </div>
-                {thumb && (
-                  <Thumbnail
-                    src={thumb.src}
-                    crop={post.data.thumbnailCrop}
-                    variant="strip"
-                  />
-                )}
+                <Thumbnail entry={post} variant="strip" />
                 <p class="t-muted text-sm leading-relaxed mb-4">
                   {post.data.description}
                 </p>
