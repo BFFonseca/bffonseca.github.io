@@ -255,6 +255,14 @@
     "title": "Add version history: browse the site at each merged PR",
     "status": "ok"
   },
+  "37": {
+    "number": 37,
+    "sha": "86d7f87e47f01c753e0544dd7d630679d6c5c857",
+    "date": "2026-11-12T18:02:19Z",
+    "branch": "content-update",
+    "title": "Add thumbnail for debugled project",
+    "status": "ok"
+  },
   "38": {
     "number": 38,
     "sha": "3335868f49820fa02da50da7cc571851ca1d10f6",
