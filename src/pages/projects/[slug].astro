@@ -1,5 +1,6 @@
 ---
 import { getCollection, render } from "astro:content";
+import ImageCarousels from "../../components/ImageCarousels.astro";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import ProjectSidebar from "../../components/ProjectSidebar.astro";
 import ViewCount from "../../components/ViewCount.astro";
@@ -84,6 +85,7 @@ const relatedPosts = blogPosts
 
       <div class="prose-content">
         <Content />
+        <ImageCarousels />
       </div>
     </article>
 

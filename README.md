@@ -82,6 +82,28 @@ public/
 
 Each project lives in its own subfolder and can include a `media/` directory for images referenced in its Markdown content. The same pattern applies to blog posts.
 
+### Image carousels
+
+Wrap images in `<div class="carousel">` in any blog post or project page:
+
+```html
+<div class="carousel">
+  <img src="https://raw.githubusercontent.com/.../media/one.jpg" alt="First" title="Optional caption" />
+  <img src="https://raw.githubusercontent.com/.../media/two.jpg" alt="Second" />
+</div>
+```
+
+Markdown images also work, with a blank line after `<div class="carousel">` and before `</div>`:
+
+```md
+<div class="carousel">
+
+![First](media/one.jpg "Optional caption")
+![Second](media/two.jpg)
+
+</div>
+```
+
 ## Deployment
 
 Pushes to `main` trigger the GitHub Actions workflow (`.github/workflows/deploy.yml`), which builds the site and publishes it to GitHub Pages. No manual steps required.
