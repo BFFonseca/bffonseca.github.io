@@ -1,9 +1,9 @@
 ---
 title: 'Designing and printing a solution'
-description: 'I bought the wrong size PDU for my mini 3d printed Rack. Might as well print a fix for it.'
-date: '2026-11-07'
+description: '📏 I bought the wrong size PDU for my mini 3d printed Rack. Might as well print a fix for it.'
+date: '2026-11-12'
 tags: ['3D-design', '3D-printing', 'autodesk-fusion', 'lab-rax']
-draft: true
+draft: false
 ---
 
 ## A Small, 0.6" Mistake
@@ -17,10 +17,7 @@ So this left me with a PDU I couldn't install in my rack 🙃
 
 Last year, I 3D printed [a small 10" rack](https://makerworld.com/en/models/1294480-lab-rax-10-server-rack-5u?from=search#profileId-1325352) for my home lab. 
 
-
-<p align="center">
-  <img src="https://raw.githubusercontent.com/BFFonseca/bffonseca.github.io/refs/heads/main/src/content/blog/9/media/LabRax_clean.png" alt='My LabRax after assembly' />
-</p>
+![LabRax after printing and assembly](media/LabRax_clean.png)
 
 This is where I house my network switch and the Raspberry Pi 4B that runs my Home Assistant and network tools like Pihole. I plan on adding more gear to it like another Rapsberry and an Access Point for better Wifi in the office.
 
@@ -35,9 +32,7 @@ If anyone's ever told you that size doesn't matter, they lied.
 
 The PDU I bought is 9.4" (23.8cm) long end to end. Now for the more astute of my readers, you might realize that 9.4" is - in fact - smaller than 10" (25.4cm). This means the PDU does not reach the end of the rack when mounted to one side.
 
-<p align="center">
-  <img src="https://raw.githubusercontent.com/BFFonseca/bffonseca.github.io/refs/heads/main/src/content/blog/9/media/pdu_too_short.png" alt='PDU too short for a 10" rack' />
-</p>
+![PDU too short for a 10" rack](media/pdu_too_short.png)
 
 
 ## How I fixed this
@@ -52,9 +47,7 @@ So I looked up 3d designs of some sort of adapter for it. Of course, this is so 
 
 That meant I had to design one. 
 
-<p align="center">
-  <img src="https://raw.githubusercontent.com/BFFonseca/bffonseca.github.io/refs/heads/main/src/content/blog/9/media/pdu_adapter_first_design.png" alt='1st Design of the PDU adapter' />
-</p>
+![First Design of the PDU adapter](media/pdu_adapter_first_design.png)
 
 I started off taking measurements and designing around the gap that exists between the rack and the PDU.
 
@@ -71,33 +64,44 @@ I felt it was unecessarily complex. And if there's one thing I've learned in 7 y
 
 After some minutes of consideration and looking at the front panels I had installed on my rack, I decided I should just simplify the design and make it simillar to what already worked.
 
-<p align="center">
-  <img src="https://raw.githubusercontent.com/BFFonseca/bffonseca.github.io/refs/heads/main/src/content/blog/9/media/pdu_adapter_final_design.png" alt='2nd and final iteration of the PDU adapter' />
-</p>
+![Second and final iteration of the PDU adapter](media/pdu_adapter_final_design.png)
 
 This resulted in a simpler design, that prints horizontally, with no supports and has perfect holes for the screws to pass through. And by experience, it holds up just fine for this use-case.
 
 So I booted up Fusion and got to work designing this from scratch. 
 
-<p align="center">
-  <img src="https://raw.githubusercontent.com/BFFonseca/bffonseca.github.io/refs/heads/main/src/content/blog/9/media/PDU_Adapter_Fusion_Timelapse.gif" alt='Final PDU Adapter design in Fusion' />
-</p>
+![PDU Adapter Fusion Timelapse](media/PDU_Adapter_Fusion_Timelapse.gif)
 
 Then I just had to export it, load it up in OrcaSlicer and send it off to the printer. Less than 30 minutes after I had it ready to install.
 
-
 <div class="carousel">
 
-![First design](media/pdu_adapter_first_design.png)
-![Final design](media/pdu_adapter_final_design.png)
+![First design](media/pdu_install_close.png)
+![Final design](media/pdu_install_rack.png)
 
 </div>
 
-## Takeaways
+It installed nicely. Could've maybe use less screws, but this way it looks better. Granted it's facing a wall, but it just gives me peace of mind 😅
+
+## Wrapping up
 
 It's good to think about creative solutions and design out of the ordinary solutions. 
 
 But sometimes you have to take a step back and think to yourself *"Is there an easier or more efficient solution to this?"* before moving on to the execution phase.
 
-## What's Next
+Overall, I'm just happy to have *finally* closed this mini-project that should've taken 30 seconds to install but took a whole day to solve.
 
+It's looking good and made me feel like upgrading the rack more. I'm thinking of replacing the switch + pi holder for one that actually holds my switch and that doesn't need a 90º USB-C adapter for the pi power cable.
+
+![Fully assembled Lab Rax](media/labrax_assembled.png)
+
+## What's Next
+For the rack/network setup:
+ - Install the wall RJ45 plug (just bought some hardware for this)
+ - Redesign and print the Switch + Pi holder
+ - Buy and install an AP for better Wifi
+ - Design a small Zigbee dongle holder for the side of the rack
+
+I've been doing some upgrades to the website. And by "I've been doing" I mean I've been prompting Claude to do them. I have some more stuff I want to make happen in the website as well, so I'll do that for today.
+
+Other than that, I also have everything I need to finally assemble the battery in the [ESP32 epaper book reader project](/projects/project-e-reader). More on that later. I think it's time to create a project page for it.
