@@ -270,5 +270,13 @@
     "branch": "versions-pr-release",
     "title": "Version history: don't rebuild the newest PR on PR runs",
     "status": "ok"
+  },
+  "39": {
+    "number": 39,
+    "sha": "74942a62745656f40388b2b6fe4f59f793b65058",
+    "date": "2026-11-12T18:31:03Z",
+    "branch": "related-images-fix",
+    "title": "Thumbnail editor: explain when related posts have no images",
+    "status": "ok"
   }
 }

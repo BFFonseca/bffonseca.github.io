@@ -1,0 +1,1 @@
+function e(e=location.pathname){return e.replace(/\/+$/,``)||`/`}export{e as t};
