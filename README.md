@@ -115,7 +115,7 @@ Every field is optional. Each slot uses the most specific value set: `strip`/`he
 
 - **Thumbnail** (Both / Strip / Banner) and **Screen** (Both / Desktop / Phone) choose which slots you're editing: the shared settings, one thumbnail on both screens, or a single slot.
 - **Image** picks any image from the entry's folder for the selection (or inherits it).
-- **Drag a frame** over the full image to choose what's shown (cyan = strip, amber = banner, dashed = phone). Clicking outside a frame jumps it there. Only frames for slots using the shown image are drawn.
+- **Drag a frame** over the full image to choose what's shown (cyan = strip, amber = banner, dashed = phone). Clicking outside a frame jumps it there. When the selected slots use different images, each image gets its own panel with its frames.
 - **Scroll** over the image or use the slider to **zoom**.
 - Live previews show all four slots at their real sizes, with the image and values each one ends up with.
 - **Save to file** writes `thumbnailCrop` into the entry's frontmatter (only that block is touched); **Copy YAML** copies it instead. **Clear selection** removes the selected level's values; **Reset all** removes everything.

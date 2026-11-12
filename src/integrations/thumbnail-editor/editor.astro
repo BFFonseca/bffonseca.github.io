@@ -68,18 +68,25 @@ const data = JSON.stringify({ entries, defaults: thumbnails, saveEndpoint: SAVE_
         </div>
         <p class="te-editing font-mono text-xs t-muted" id="te-editing"></p>
 
-        <div class="te-stage" id="te-stage">
-          <img id="te-img" alt="" draggable="false" />
-          <div class="te-frame te-frame-strip" data-v="strip" data-s="desktop"><span>strip</span></div>
-          <div class="te-frame te-frame-strip te-frame-mobile" data-v="strip" data-s="mobile"><span>strip · phone</span></div>
-          <div class="te-frame te-frame-hero" data-v="hero" data-s="desktop"><span>banner</span></div>
-          <div class="te-frame te-frame-hero te-frame-mobile" data-v="hero" data-s="mobile"><span>banner · phone</span></div>
-        </div>
+        <!-- One stage per distinct image used by the selected slots (filled in by the script). -->
+        <div class="te-stages" id="te-stages"></div>
+        <template id="te-stage-tpl">
+          <figure class="te-stage-wrap">
+            <figcaption class="te-stage-cap font-mono"></figcaption>
+            <div class="te-stage">
+              <img alt="" draggable="false" />
+              <div class="te-frame te-frame-strip" data-v="strip" data-s="desktop"><span>strip</span></div>
+              <div class="te-frame te-frame-strip te-frame-mobile" data-v="strip" data-s="mobile"><span>strip · phone</span></div>
+              <div class="te-frame te-frame-hero" data-v="hero" data-s="desktop"><span>banner</span></div>
+              <div class="te-frame te-frame-hero te-frame-mobile" data-v="hero" data-s="mobile"><span>banner · phone</span></div>
+            </div>
+          </figure>
+        </template>
         <p class="te-legend t-muted">
           <span class="te-key te-key-strip"></span> strip
           <span class="te-key te-key-hero"></span> banner
           <span class="te-key te-key-mobile"></span> dashed = phone
-          <span class="te-note">· only frames using the image shown here are drawn</span>
+          <span class="te-note">· when the selected thumbnails use different images, each image gets its own panel</span>
         </p>
 
         <div class="te-controls">
@@ -139,8 +146,9 @@ const data = JSON.stringify({ entries, defaults: thumbnails, saveEndpoint: SAVE_
     const $ = <T extends HTMLElement>(id: string) => document.getElementById(id) as T;
     const select = $<HTMLSelectElement>('te-entry');
     const imageSelect = $<HTMLSelectElement>('te-image');
-    const stage = $<HTMLDivElement>('te-stage');
-    const stageImg = $<HTMLImageElement>('te-img');
+    const stagesEl = $<HTMLDivElement>('te-stages');
+    const stageTpl = $<HTMLTemplateElement>('te-stage-tpl');
+    const stages = new Map<string, HTMLElement>(); // image path -> stage wrapper
     const zoom = $<HTMLInputElement>('te-zoom');
     const status = $<HTMLParagraphElement>('te-status');
     const NUM = ['x', 'y', 'zoom'] as const;
@@ -235,20 +243,36 @@ const data = JSON.stringify({ entries, defaults: thumbnails, saveEndpoint: SAVE_
 
       const f = focus();
       const shown = eff(f.v, f.s);
-      if (stageImg.getAttribute('src') !== shown.img.url) stageImg.src = shown.img.url;
-      stage.style.aspectRatio = `${shown.img.w} / ${shown.img.h}`;
-      stage.style.width = `min(100%, calc(70vh * ${shown.img.w / shown.img.h}))`;
 
-      stage.querySelectorAll<HTMLElement>('.te-frame').forEach((fr) => {
-        const v = fr.dataset.v as Variant, s = fr.dataset.s as Screen;
-        const sameImg = eff(v, s).img === shown.img;
-        fr.hidden = !sameImg;
-        if (!sameImg) return;
-        const r = region(v, s);
-        Object.assign(fr.style, { left: `${r.left * 100}%`, top: `${r.top * 100}%`, width: `${r.fw * 100}%`, height: `${r.fh * 100}%` });
-        const active = affects(v, s);
-        fr.classList.toggle('active', active);
-        fr.classList.toggle('grab', active && (s === 'desktop' || layer.s === 'mobile'));
+      // One stage per distinct image among the selected slots, in slot order.
+      const used = [...new Set(SLOTS.filter(({ v, s }) => affects(v, s)).map(({ v, s }) => eff(v, s).img))];
+      for (const [path, el] of stages) if (!used.some((i) => i.path === path)) { el.remove(); stages.delete(path); }
+      used.forEach((img, idx) => {
+        const wrap = stages.get(img.path) ?? makeStage(img.path);
+        if (stagesEl.children[idx] !== wrap) stagesEl.insertBefore(wrap, stagesEl.children[idx] ?? null);
+        const stage = wrap.querySelector<HTMLElement>('.te-stage')!;
+        const stageImg = stage.querySelector('img')!;
+        if (stageImg.getAttribute('src') !== img.url) stageImg.src = img.url;
+        const maxH = used.length > 1 ? 45 : 70;
+        stage.style.aspectRatio = `${img.w} / ${img.h}`;
+        stage.style.width = `min(100%, calc(${maxH}vh * ${img.w / img.h}))`;
+        const users = SLOTS.filter(({ v, s }) => affects(v, s) && eff(v, s).img === img).map(({ v, s }) => `${NAME[v]} · ${NAME[s]}`);
+        wrap.querySelector('.te-stage-cap')!.textContent = used.length > 1 ? `${img.path} — ${users.join(', ')}` : '';
+
+        stage.querySelectorAll<HTMLElement>('.te-frame').forEach((fr) => {
+          const v = fr.dataset.v as Variant, s = fr.dataset.s as Screen;
+          const sameImg = eff(v, s).img === img;
+          fr.hidden = !sameImg;
+          if (!sameImg) return;
+          const r = region(v, s);
+          Object.assign(fr.style, { left: `${r.left * 100}%`, top: `${r.top * 100}%`, width: `${r.fw * 100}%`, height: `${r.fh * 100}%` });
+          const active = affects(v, s);
+          // Desktop frames are the handles; a phone frame is only grabbable when editing phone alone,
+          // or when it's the only selected frame on this image.
+          const desktopOnHere = SLOTS.some((o) => o.s === 'desktop' && affects(o.v, o.s) && eff(o.v, o.s).img === img);
+          fr.classList.toggle('active', active);
+          fr.classList.toggle('grab', active && (s === 'desktop' || layer.s === 'mobile' || !desktopOnHere));
+        });
       });
 
       document.querySelectorAll<HTMLElement>('.te-pv').forEach((box) => {
@@ -312,40 +336,50 @@ const data = JSON.stringify({ entries, defaults: thumbnails, saveEndpoint: SAVE_
 
     // Dragging a frame moves it so the same image point stays under the pointer.
     let drag: { v: Variant; s: Screen; sx: number; sy: number; left: number; top: number } | null = null;
-    stage.addEventListener('pointerdown', (ev) => {
-      ev.preventDefault();
-      const area = (el: Element) => { const r = el.getBoundingClientRect(); return r.width * r.height; };
-      const hit = document.elementsFromPoint(ev.clientX, ev.clientY)
-        .filter((el): el is HTMLElement => el instanceof HTMLElement && el.matches('.te-frame.grab:not([hidden])'))
-        .sort((a, b) => area(a) - area(b))[0];
-      const frame = hit ?? stage.querySelector<HTMLElement>('.te-frame.grab:not([hidden])');
-      if (!frame) return;
-      const v = frame.dataset.v as Variant, s = frame.dataset.s as Screen;
-      let r = region(v, s);
-      if (!hit) {
-        // Clicked outside a frame: centre the frame on that point first.
+
+    function makeStage(path: string): HTMLElement {
+      const wrap = (stageTpl.content.firstElementChild as HTMLElement).cloneNode(true) as HTMLElement;
+      stages.set(path, wrap);
+      const stage = wrap.querySelector<HTMLElement>('.te-stage')!;
+      stage.querySelector('img')!.addEventListener('load', render);
+
+      stage.addEventListener('pointerdown', (ev) => {
+        ev.preventDefault();
+        const area = (el: Element) => { const r = el.getBoundingClientRect(); return r.width * r.height; };
+        const hit = document.elementsFromPoint(ev.clientX, ev.clientY)
+          .filter((el): el is HTMLElement => el instanceof HTMLElement && el.matches('.te-frame.grab:not([hidden])'))
+          .sort((a, b) => area(a) - area(b))[0];
+        const frame = hit ?? stage.querySelector<HTMLElement>('.te-frame.grab:not([hidden])');
+        if (!frame) return;
+        const v = frame.dataset.v as Variant, s = frame.dataset.s as Screen;
+        let r = region(v, s);
+        if (!hit) {
+          // Clicked outside a frame: centre the frame on that point first.
+          const rect = stage.getBoundingClientRect();
+          setFrom(v, s, (ev.clientX - rect.left) / rect.width - r.fw / 2, (ev.clientY - rect.top) / rect.height - r.fh / 2);
+          r = region(v, s);
+        }
+        drag = { v, s, sx: ev.clientX, sy: ev.clientY, left: r.left, top: r.top };
+        stage.setPointerCapture(ev.pointerId);
+      });
+      stage.addEventListener('pointermove', (ev) => {
+        if (!drag) return;
         const rect = stage.getBoundingClientRect();
-        setFrom(v, s, (ev.clientX - rect.left) / rect.width - r.fw / 2, (ev.clientY - rect.top) / rect.height - r.fh / 2);
-        r = region(v, s);
-      }
-      drag = { v, s, sx: ev.clientX, sy: ev.clientY, left: r.left, top: r.top };
-      stage.setPointerCapture(ev.pointerId);
-    });
-    stage.addEventListener('pointermove', (ev) => {
-      if (!drag) return;
-      const rect = stage.getBoundingClientRect();
-      setFrom(drag.v, drag.s, drag.left + (ev.clientX - drag.sx) / rect.width, drag.top + (ev.clientY - drag.sy) / rect.height);
-    });
-    stage.addEventListener('pointerup', () => (drag = null));
-    stage.addEventListener('pointercancel', () => (drag = null));
+        setFrom(drag.v, drag.s, drag.left + (ev.clientX - drag.sx) / rect.width, drag.top + (ev.clientY - drag.sy) / rect.height);
+      });
+      stage.addEventListener('pointerup', () => (drag = null));
+      stage.addEventListener('pointercancel', () => (drag = null));
+      stage.addEventListener('wheel', (ev) => {
+        ev.preventDefault();
+        // Zoom relative to the first selected slot shown on this image.
+        const f = SLOTS.find(({ v, s }) => affects(v, s) && eff(v, s).img.path === path) ?? focus();
+        setZoom(eff(f.v, f.s).zoom * (ev.deltaY < 0 ? 1.1 : 1 / 1.1));
+      }, { passive: false });
+      return wrap;
+    }
 
     const setZoom = (z: number) => { target().zoom = clamp(z, 1, 4); dirty(); render(); };
     zoom.addEventListener('input', () => setZoom(Number(zoom.value)));
-    stage.addEventListener('wheel', (ev) => {
-      ev.preventDefault();
-      const f = focus();
-      setZoom(eff(f.v, f.s).zoom * (ev.deltaY < 0 ? 1.1 : 1 / 1.1));
-    }, { passive: false });
 
     imageSelect.addEventListener('change', () => {
       const t = target();
@@ -393,7 +427,6 @@ const data = JSON.stringify({ entries, defaults: thumbnails, saveEndpoint: SAVE_
       }
     });
 
-    stageImg.addEventListener('load', render);
     window.addEventListener('resize', render);
     render();
   }
@@ -412,6 +445,10 @@ const data = JSON.stringify({ entries, defaults: thumbnails, saveEndpoint: SAVE_
   .te-tabs button:disabled { opacity: 0.35; cursor: not-allowed; }
   .te-editing { margin-bottom: 1rem; }
 
+  .te-stages { display: grid; gap: 1.25rem; }
+  .te-stage-wrap { margin: 0; }
+  .te-stage-cap { font-size: 0.75rem; color: var(--muted); margin-bottom: 0.4rem; text-align: center; }
+  .te-stage-cap:empty { display: none; }
   .te-stage { position: relative; width: 100%; margin: 0 auto; border-radius: 0.5rem; overflow: hidden; cursor: crosshair; touch-action: none; user-select: none; background: var(--surface); }
   .te-stage img { width: 100%; height: 100%; display: block; opacity: 0.55; pointer-events: none; }
   .te-frame { position: absolute; border: 2px solid; pointer-events: none; opacity: 0.3; box-sizing: border-box; }
