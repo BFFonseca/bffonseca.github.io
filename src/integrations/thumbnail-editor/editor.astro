@@ -333,11 +333,26 @@ const data = JSON.stringify({ entries, defaults: thumbnails, saveEndpoint: SAVE_
     const overridden = (v: Variant, s: Screen, k: keyof Slot) =>
       levels(v, s).slice(0, layerIndex(layer)).some((l) => l?.[k] !== undefined);
 
-    function setFrom(v: Variant, s: Screen, left: number, top: number) {
+    // Where a drag/zoom on an image's panel is written. Normally the selected level; but when the
+    // selected thumbnails use different images, a panel only changes the thumbnails shown on it
+    // (each at its own strip/banner + desktop/phone level), so the other images stay put.
+    function panelTargets(path: string | null): { slot: Slot; v: Variant; s: Screen; own: boolean }[] {
+      const selected = SLOTS.filter(({ v, s }) => affects(v, s));
+      const onPanel = path === null ? selected : selected.filter(({ v, s }) => eff(v, s).img?.path === path);
+      if (onPanel.length === selected.length) {
+        return onPanel.map(({ v, s }) => ({ slot: target(), v, s, own: false }));
+      }
+      return onPanel.map(({ v, s }) => ({ slot: ((crop()[v] ??= {})[s] ??= {}), v, s, own: true }));
+    }
+
+    function setFrom(v: Variant, s: Screen, left: number, top: number, path: string | null) {
       const r = region(v, s);
-      const t = target();
-      if (r.fw < 1 && !overridden(v, s, 'x')) t.x = (clamp(left, 0, 1 - r.fw) / (1 - r.fw)) * 100;
-      if (r.fh < 1 && !overridden(v, s, 'y')) t.y = (clamp(top, 0, 1 - r.fh) / (1 - r.fh)) * 100;
+      const x = r.fw < 1 ? (clamp(left, 0, 1 - r.fw) / (1 - r.fw)) * 100 : undefined;
+      const y = r.fh < 1 ? (clamp(top, 0, 1 - r.fh) / (1 - r.fh)) * 100 : undefined;
+      for (const t of panelTargets(path)) {
+        if (x !== undefined && (t.own || !overridden(t.v, t.s, 'x'))) t.slot.x = x;
+        if (y !== undefined && (t.own || !overridden(t.v, t.s, 'y'))) t.slot.y = y;
+      }
       dirty();
       render();
     }
@@ -364,7 +379,7 @@ const data = JSON.stringify({ entries, defaults: thumbnails, saveEndpoint: SAVE_
         if (!hit) {
           // Clicked outside a frame: centre the frame on that point first.
           const rect = stage.getBoundingClientRect();
-          setFrom(v, s, (ev.clientX - rect.left) / rect.width - r.fw / 2, (ev.clientY - rect.top) / rect.height - r.fh / 2);
+          setFrom(v, s, (ev.clientX - rect.left) / rect.width - r.fw / 2, (ev.clientY - rect.top) / rect.height - r.fh / 2, path);
           r = region(v, s);
         }
         drag = { v, s, sx: ev.clientX, sy: ev.clientY, left: r.left, top: r.top };
@@ -373,7 +388,7 @@ const data = JSON.stringify({ entries, defaults: thumbnails, saveEndpoint: SAVE_
       stage.addEventListener('pointermove', (ev) => {
         if (!drag) return;
         const rect = stage.getBoundingClientRect();
-        setFrom(drag.v, drag.s, drag.left + (ev.clientX - drag.sx) / rect.width, drag.top + (ev.clientY - drag.sy) / rect.height);
+        setFrom(drag.v, drag.s, drag.left + (ev.clientX - drag.sx) / rect.width, drag.top + (ev.clientY - drag.sy) / rect.height, path);
       });
       stage.addEventListener('pointerup', () => (drag = null));
       stage.addEventListener('pointercancel', () => (drag = null));
@@ -381,12 +396,18 @@ const data = JSON.stringify({ entries, defaults: thumbnails, saveEndpoint: SAVE_
         ev.preventDefault();
         // Zoom relative to the first selected slot shown on this image.
         const f = SLOTS.find(({ v, s }) => affects(v, s) && eff(v, s).img?.path === path) ?? focus();
-        setZoom(eff(f.v, f.s).zoom * (ev.deltaY < 0 ? 1.1 : 1 / 1.1));
+        setZoom(eff(f.v, f.s).zoom * (ev.deltaY < 0 ? 1.1 : 1 / 1.1), path);
       }, { passive: false });
       return wrap;
     }
 
-    const setZoom = (z: number) => { target().zoom = clamp(z, 1, 4); dirty(); render(); };
+    // The slider changes the selected level; scrolling over a panel only changes that panel's thumbnails.
+    const setZoom = (z: number, path?: string) => {
+      if (path === undefined) target().zoom = clamp(z, 1, 4);
+      else for (const t of panelTargets(path)) t.slot.zoom = clamp(z, 1, 4);
+      dirty();
+      render();
+    };
     zoom.addEventListener('input', () => setZoom(Number(zoom.value)));
 
     imageSelect.addEventListener('change', () => {
