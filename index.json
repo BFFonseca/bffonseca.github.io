@@ -238,5 +238,13 @@
     "branch": "content-update",
     "title": "Content update",
     "status": "ok"
+  },
+  "36": {
+    "number": 36,
+    "sha": "9fee4cac319238ada3820c5ab6ee6ff70c018afd",
+    "date": "2026-11-12T17:50:49Z",
+    "branch": "version-history",
+    "title": "Add version history: browse the site at each merged PR",
+    "status": "ok"
   }
 }
