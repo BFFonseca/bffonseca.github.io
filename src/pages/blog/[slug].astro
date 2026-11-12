@@ -16,7 +16,7 @@ export async function getStaticPaths() {
 
 const { post, slug } = Astro.props;
 const { Content } = await render(post);
-const { title, description, date, tags, thumbnailPosition } = post.data;
+const { title, description, date, tags, thumbnailCrop } = post.data;
 const thumb = getThumbnail(post);
 ---
 
@@ -31,7 +31,7 @@ const thumb = getThumbnail(post);
 
     {
       thumb && (
-        <Thumbnail src={thumb.src} alt={thumb.alt} position={thumbnailPosition} variant="hero" />
+        <Thumbnail src={thumb.src} alt={thumb.alt} crop={thumbnailCrop} variant="hero" />
       )
     }
 
