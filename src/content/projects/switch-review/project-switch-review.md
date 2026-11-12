@@ -25,9 +25,7 @@ They asked me to pick one of these so they could send them over for review.
 
 I ended up choosing the Crystal Silver U1 as the Silver line of switches has been one of my favourites over the years.
 
-<p align="center">
-  <img src="https://raw.githubusercontent.com/BFFonseca/bffonseca.github.io/refs/heads/main/src/content/projects/switch-review/media/1784574758172.png" alt="CS U1 specs" />
-</p>
+![CS U1 specs](media/1784574758172.png)
 
 ## The Deal
 

@@ -16,9 +16,7 @@ relatedTag: 'project-psu-repair'
 
 Old desktop PSU stopped working. At first only very sporadically, then constantly. Until I decided it wasn't safe to keep using and pulled it out. 
 
-<p align="center">
-  <img src="https://raw.githubusercontent.com/BFFonseca/bffonseca.github.io/refs/heads/main/src/content/projects/psu-repair/media/1784585164185.png" alt="Burnt PSU PCB" />
-</p>
+![Burnt PSU PCB](media/1784585164185.png)
 
 I contacted customer support because the PSU was still covered by the manufacturer's warranty. But to send them the PSU for check (not even repair), I'd have to pay postage. Then they would still have to evaluate if it was covered by the warranty. And even if they repaired it, the whole process would take weeks. 
 

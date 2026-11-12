@@ -26,9 +26,7 @@ Back then I bought a Canon EOS 750D. It's a good camera, don't get me wrong. But
 Then something happened at the start of the summer: A friend wanted to buy a mirrorless and asked for an opinion.
 That was the point of no return for me. I started researching mirrorless cameras, which ones were the best bang for the buck, which were the best for photography, for video, full frame vs crop, newer sensors or technologies with each iteration... 
 
-<p align="center">
-  <img src="https://raw.githubusercontent.com/BFFonseca/bffonseca.github.io/refs/heads/main/src/content/blog/7/media/alice-rabbithole.gif" alt="Alice going down the rabbit hole" />
-</p>
+![Alice going down the rabbit hole](media/alice-rabbithole.gif)
 
 I got sucked into the rabbithole of spec comparison and price checking everything, both new and 2nd hand cameras and lenses.
 Meanwhile my friend had already decided and bought a Sony a6400 kit with 2 lenses. Really good for a beginner to take some casual photos while roaming around on the weekends.
@@ -46,17 +44,13 @@ So the website got a few small upgrades meanwhile. Resized some fonts, updated s
 
 ### PSU Repair
 Yeah... so... It kinda exploded 😀
-<p align="center">
-  <img src="https://raw.githubusercontent.com/BFFonseca/bffonseca.github.io/refs/heads/main/src/content/blog/7/media/psu-short.gif" alt="PSU shorts and sparks fly" />
-</p>
+![PSU shorts and sparks fly](media/psu-short.gif)
 
 That scared the shit out of me. *It was loud as hell!*
 You can't hear it, but if you've experienced this before you know what I'm talking about. 
 
 I soldered a track that was seemingly melted/burned due to over time exposure to heat. It looked like it was supposed to be shorted, so I did. Well... You probably guessed it by now, it shouldn't have been shorted. In fact I'm starting to believe it either shouldn't be shorted or something else is causing a very high current there.
-<p align="center">
-  <img src="https://raw.githubusercontent.com/BFFonseca/bffonseca.github.io/refs/heads/main/src/content/blog/7/media/psu-short-after-repair.png" alt="PSU shorted circuit" />
-</p>
+![PSU shorted circuit](media/psu-short-after-repair.png)
 
 For now I'm putting this on hold since I don't really need that PSU and I've remembered why I don't like AC and high voltages 😌
 
@@ -69,9 +63,7 @@ My biggest contenders were the Cooler Master Q500L and the Jonsbo D41. I was ver
 My goal with this project was to re-use the parts I have and keep it on a very thight budget (specially after buying the camera and lens). So I started looking at the Cooler Master Q500L and fortunatelly I found one second-hand almost new for cheap. So I bought it and received it maybe a week later.
 
 I've since built the Server, installed Ubuntu Server 26.04.1 LTS on ZFS so I can roll back bad updates and got Claude Code and llama.cpp working to help me manage the server. I also asked Claude to build a pretty dashboard that I can access on my LAN through a web-browser 😁
-<p align="center">
-  <img src="https://raw.githubusercontent.com/BFFonseca/bffonseca.github.io/refs/heads/main/src/content/blog/7/media/server-dashboard.png" alt="Web Dashboard for the Ubuntu Server" />
-</p>
+![Web Dashboard for the Ubuntu Server](media/server-dashboard.png)
 
 
 ### Small backend update with big implications

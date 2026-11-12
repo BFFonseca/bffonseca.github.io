@@ -56,9 +56,7 @@ After that, I bought the rest of the trilogy and kept on getting immersed in thi
 
 Since then, I've accumulated and read over a dozen of Brandon Sanderson's book.
 
-<p align="center">
-  <img src="https://raw.githubusercontent.com/BFFonseca/bffonseca.github.io/refs/heads/main/src/content/blog/8/media/sanderson-book-collection.jpg" alt="Sanderson Book Collection" />
-</p>
+![Sanderson Book Collection](media/sanderson-book-collection.jpg)
 
 I've also read almost all of Matt Dinniman's Dungeon Crawler Carl (DCC) books. These ones were the real addiction. They are a fast paced, D&D like high-fantasy action with wacky characters and an even wackier premisse: Aliens have come to claim back Earth and make a reality show out of it: 
 
@@ -68,17 +66,13 @@ Survive an 18 layer dungeon and become owner (?) of Earth. Plot-twist (not reall
 
 Bottom line: This ammounts to over 20 books in the span of maybe... an year? Year and a half maybe. And I'm not talking about those puny 300 or 400 pages books. I'm talking about hard-cover 1000+ pages books that weight 1Kg (~~2.2 pounds~~ you know what, this is an engineering website, learn metric 🙄).
 
-<p align="center">
-  <img src="https://raw.githubusercontent.com/BFFonseca/bffonseca.github.io/refs/heads/main/src/content/blog/8/media/dcc-book-pile.jpg" alt="DCC Book Collection" />
-</p>
+![DCC Book Collection](media/dcc-book-pile.jpg)
 
 So three issues started developing.
 
 1. Books are a bit heavy and big. It makes them unhandy to bring with me while going out and while reading in bed. Plus they are noisy enough to wake up my girlfriend when I stay in bed reading for too many hours to disclose here. Let's just say I've slept less than 6h because of it sometimes... 👀
    
-<p align="center">
-  <img src="https://raw.githubusercontent.com/BFFonseca/bffonseca.github.io/refs/heads/main/src/content/blog/8/media/bedside-books.jpg" alt="Bedside Books" />
-</p>
+![Bedside Books](media/bedside-books.jpg)
 
 2. It quickly becomes expensive. It would be ok if I bought 1 book a month. But at the rate I'm reading, specially DCC books, I've bought 2 or 3 per month. That adds up.
 
@@ -112,9 +106,7 @@ I immediately when searching for it. I ended up buying one without battery becau
 ## Current Status
 A few weeks after, I got the board. I boot it up through USB and flashed it with a nice [english fork of the original Waveshare repo](https://github.com/hudsonrj/esp32-s3-e-papper). It works great. I also [3d printed the bottom of a housing](https://makerworld.com/en/models/3180226-folloup#profileId-3596844) for a test fit. Since it doesn't have a battery, it has just been sitting on my desk as a clock while I wait for a battery to fully assemble it.
 
-<p align="center">
-  <img src="https://raw.githubusercontent.com/BFFonseca/bffonseca.github.io/refs/heads/main/src/content/blog/8/media/epaper-clock.jpg" alt="Waveshare ESP32-S3 epaper in clock mode" />
-</p>
+![Waveshare ESP32-S3 epaper in clock mode](media/epaper-clock.jpg)
 
 And this is where I'm stuck at a crossroads. This 3d print is designed for the battery that this board usually comes with. This battery is very *very* specific and hard to find. It's a 1500mAh Li-Po with the model number 454261 and a 2pin JST connector. The connector part is a bit irrelevant since I can just buy a loose one and crimp it myself. The hard part is the battery and it's very specific dimensions, 4.5 x 42 x 61 mm3. 
 
