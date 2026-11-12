@@ -178,16 +178,21 @@ const slides = (
     dots.forEach((d, i) => d.addEventListener("click", () => go(i)));
 
     // Autoplay, paused while hovered or focused, and off for reduced motion.
+    // Touchscreens have no hover, so the first touch stops autoplay for good.
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     let paused = false;
+    let stopped = false;
     const pause = () => (paused = true);
     const resume = () => (paused = false);
     root.addEventListener("mouseenter", pause);
     root.addEventListener("mouseleave", resume);
     root.addEventListener("focusin", pause);
     root.addEventListener("focusout", resume);
+    root.addEventListener("pointerdown", (e) => {
+      if (e.pointerType !== "mouse") stopped = true;
+    });
     setInterval(() => {
-      if (!paused && !document.hidden && lastIndex() > 0) go(current + 1);
+      if (!stopped && !paused && !document.hidden && lastIndex() > 0) go(current + 1);
     }, AUTOPLAY_MS);
   });
 </script>
@@ -246,7 +251,7 @@ const slides = (
     width: 0.5rem;
     height: 0.5rem;
     border-radius: 9999px;
-    background-color: var(--border);
+    background-color: var(--muted);
     cursor: pointer;
     transition: background-color 0.2s;
   }

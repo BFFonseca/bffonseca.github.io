@@ -1,16 +1,18 @@
 ---
+// The logo links home and About lives in the footer, which keeps the header
+// narrow enough for 360px phones.
 const navLinks = [
-  { href: '/',         label: 'home'     },
   { href: '/projects', label: 'projects' },
   { href: '/blog',     label: 'blog'     },
-  { href: '/about',  label: 'about'  },
 ];
 
-const pathname = new URL(Astro.request.url).pathname;
-const currentPath = pathname.slice(1);
+// A link is active on its own page and on any page under it
+// (e.g. "projects" on /projects/project-home-server).
+const pathname = new URL(Astro.request.url).pathname.replace(/\/$/, '');
+const isActive = (href: string) => pathname === href || pathname.startsWith(href + '/');
 ---
 
-<nav class="w-full flex items-center justify-between">
+<nav class="w-full flex items-center justify-between gap-6">
     <a href="/" class="font-mono font-medium text-lg tracking-tight" style="color: var(--accent);">
       Debug<span style="color: var(--text);">LED</span>
     </a>
@@ -21,7 +23,8 @@ const currentPath = pathname.slice(1);
           <li>
             <a
               href={link.href}
-              class={`nav-link ${currentPath === link.href ? 'active-link' : ''}`}
+              class={`nav-link ${isActive(link.href) ? 'active-link' : ''}`}
+              aria-current={isActive(link.href) ? 'page' : undefined}
             >
               {link.label}
             </a>

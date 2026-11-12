@@ -5,7 +5,7 @@
   --color-led-green:   #00FF94;
   --color-led-dark:    #0A0E1A;
   --color-led-surface: #111827;
-  --color-led-muted:   #6B7280;
+  --color-led-muted:   #9CA3AF;
   --color-led-light:   #F3F4F6;
   --font-mono:    "JetBrains Mono", monospace;
   --font-display: "Space Grotesk", sans-serif;
@@ -19,7 +19,7 @@
     --bg:      #0A0E1A;
     --surface: #111827;
     --text:    #F3F4F6;
-    --muted:   #6B7280;
+    --muted:   #9CA3AF;
     --accent:  #00FF94;
     --done:    #F3F4F6;
     --border:  #1f2937;
@@ -107,3 +107,9 @@
 :root.light .prose-content thead th {
   background-color: rgba(0,0,0,0.03);
 }
+/* Thumbnails (see components/Thumbnail.astro; sizes and default crop live in site.config.ts) */
+.thumb { display: block; width: 100%; height: var(--thumb-h-sm); overflow: hidden; border: 1px solid var(--border); background-color: var(--surface); }
+.thumb img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.thumb-strip { border-radius: 0.5rem; margin-bottom: 0.875rem; }
+.thumb-hero  { border-radius: 0.75rem; margin-bottom: 2rem; }
+@media (min-width: 768px) { .thumb { height: var(--thumb-h-md, var(--thumb-h-sm)); } }
