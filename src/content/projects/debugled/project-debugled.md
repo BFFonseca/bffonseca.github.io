@@ -9,13 +9,17 @@ relatedTag: 'project-debugled'
 thumbnailCrop:
   strip:
     desktop:
-      y: 24.4
-      image: 'none'
+      y: 47.1
+    mobile:
+      x: 0
   hero:
     desktop:
-      x: 43
+      x: 47.6
       y: 0
-      zoom: 2.59
+      zoom: 1
+    mobile:
+      x: 51.7
+      zoom: 1
 ---
 # Start with why
 

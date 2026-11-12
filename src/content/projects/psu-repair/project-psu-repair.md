@@ -8,6 +8,22 @@ start date: '2026-07-08'
 end date: '-'
 status: 'paused'
 relatedTag: 'project-psu-repair'
+thumbnailCrop:
+  strip:
+    desktop:
+      y: 27.7
+      image: 'media/1784585164185.png'
+    mobile:
+      x: 60.9
+      y: 26.2
+      zoom: 1.33
+  hero:
+    desktop:
+      y: 26.3
+    mobile:
+      x: 100
+      y: 35.3
+      zoom: 1.1
 ---
 
 

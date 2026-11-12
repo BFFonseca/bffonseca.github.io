@@ -4,6 +4,23 @@ description: '📏 I bought the wrong size PDU for my mini 3d printed Rack. Migh
 date: '2026-11-12'
 tags: ['3D-design', '3D-printing', 'autodesk-fusion', 'lab-rax']
 draft: false
+thumbnailCrop:
+  strip:
+    desktop:
+      y: 30.9
+      image: 'media/pdu_adapter_final_design.png'
+    mobile:
+      x: 46.4
+      y: 51.4
+      zoom: 1
+      image: 'media/pdu_adapter_final_design.png'
+  hero:
+    desktop:
+      y: 32.1
+      image: 'media/PDU_Adapter_Fusion_Timelapse.gif'
+    mobile:
+      y: 36.4
+      image: 'media/PDU_Adapter_Fusion_Timelapse.gif'
 ---
 
 ## A Small, 0.6" Mistake
