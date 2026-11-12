@@ -1,6 +1,7 @@
 ---
 import { getCollection } from "astro:content";
 import type { CollectionEntry } from "astro:content";
+import Thumbnail from "./Thumbnail.astro";
 
 // Same ordering as the blog index: newest date first, then highest post number.
 const postNumber = (post: CollectionEntry<"blog">) =>
@@ -23,6 +24,8 @@ const slug = post?.id.split("/").pop()?.replace(/\.md$/, "");
         </h4>
         <time class="font-mono text-xs t-muted shrink-0 mt-1">{post.data.date}</time>
       </div>
+      {/* Same strip (and crop) as the post's card on /blog */}
+      <Thumbnail entry={post} variant="strip" />
       <p class="t-muted text-sm leading-relaxed mb-4">{post.data.description}</p>
       <div class="flex flex-wrap gap-2">
         {post.data.tags.map((tag) => (

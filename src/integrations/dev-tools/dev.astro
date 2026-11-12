@@ -1,0 +1,22 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { devTools } from './tools';
+---
+
+<BaseLayout title="Dev tools">
+  <section>
+    <h1 class="section-title text-4xl mb-2">Dev tools</h1>
+    <p class="led-accent text-sm mb-12">// only available while running npm run dev</p>
+
+    <div class="grid gap-6">
+      {devTools.map((tool) => (
+        <a href={tool.href} class="card group block">
+          <h2 class="font-display text-xl font-semibold t-text group-hover-accent transition-colors mb-2">
+            {tool.title}
+          </h2>
+          <p class="t-muted text-sm leading-relaxed">{tool.description}</p>
+        </a>
+      ))}
+    </div>
+  </section>
+</BaseLayout>

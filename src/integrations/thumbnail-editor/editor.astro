@@ -1,30 +1,75 @@
 ---
-// Dev-only page (see ./index.ts): interactive thumbnail crop editor.
+// Dev-only page (see ./index.ts): interactive thumbnail image + crop editor.
+// The four thumbnails (strip/banner × desktop/phone) are edited fully independently. Shared
+// values already in a file's frontmatter are folded into each thumbnail, and saving writes one
+// block per thumbnail (thumbnailCrop.<strip|hero>.<desktop|mobile>).
 import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import { getThumbnail } from '../../lib/thumbnail';
+import path from 'node:path';
+import { entryDir, entryImages, getThumbnail, slotLevels, SCREENS, VARIANTS, type SlotCrop, type ThumbnailCrop } from '../../lib/thumbnail';
 import { thumbnails } from '../../site.config';
 import { SAVE_ENDPOINT } from './index';
+
+const SLOTS = VARIANTS.flatMap((v) => SCREENS.map((s) => ({ v, s, key: `${v}-${s}` })));
+const NAME = { strip: 'Strip', hero: 'Banner', desktop: 'desktop', mobile: 'phone' } as const;
+const KEYS = ['x', 'y', 'zoom', 'image'] as const;
 
 const blog = await getCollection('blog');
 const projects = await getCollection('projects');
 
+const toImg = (p: string, src: ImageMetadata) => ({ path: p, url: src.src, w: src.width, h: src.height });
+
+// For a project: images from blog posts tagged with its relatedTag, as paths relative to the project's .md.
+function relatedImages(project: (typeof projects)[number]) {
+  const tag = project.data.relatedTag;
+  const from = entryDir(project);
+  if (!tag || !from) return [];
+  return blog
+    .filter((post) => post.data.tags.includes(tag))
+    .sort((a, b) => b.data.date.localeCompare(a.data.date))
+    .map((post) => {
+      const dir = entryDir(post)!;
+      return {
+        title: post.data.title + (post.data.draft ? ' (draft)' : ''),
+        images: entryImages(post).map((i) => toImg(path.posix.relative(from, `${dir}/${i.path}`), i.src)),
+      };
+    })
+    .filter((p) => p.images.length > 0);
+}
+
 const entries = [
-  ...blog.map((e) => ({ e, collection: 'blog' as const })),
-  ...projects.map((e) => ({ e, collection: 'projects' as const })),
+  // Blog posts live in numbered folders (content/blog/<n>/...): list them by that number.
+  ...blog
+    .map((e) => ({ e, collection: 'blog' as const, number: Number(e.id.split('/')[0]) || undefined }))
+    .sort((a, b) => (a.number ?? Infinity) - (b.number ?? Infinity)),
+  ...projects.map((e) => ({ e, collection: 'projects' as const, number: undefined })),
 ]
-  .map(({ e, collection }) => {
-    const thumb = getThumbnail(e);
-    if (!thumb || !e.filePath) return undefined;
+  .map(({ e, collection, number }) => {
+    const images = entryImages(e);
+    const related = collection === 'projects' ? relatedImages(e as (typeof projects)[number]) : [];
+    if ((!images.length && !related.length) || !e.filePath) return undefined;
+    const auto = getThumbnail(e);
+    const crop = e.data.thumbnailCrop as ThumbnailCrop | undefined;
+    // Each thumbnail's explicitly set values, from whichever level of the frontmatter sets them.
+    const slots = Object.fromEntries(SLOTS.map(({ v, s, key }) => {
+      const levels = slotLevels(crop, v, s);
+      const slot: SlotCrop = {};
+      for (const k of KEYS) {
+        const val = levels.find((l) => l[k] !== undefined)?.[k];
+        if (val !== undefined) (slot as Record<string, unknown>)[k] = val;
+      }
+      return [key, slot];
+    }));
     return {
       key: `${collection}/${e.id}`,
       collection,
+      label: number !== undefined ? `blog · #${number}` : collection,
       title: e.data.title + ('draft' in e.data && e.data.draft ? ' (draft)' : ''),
       file: e.filePath.replace(/\\/g, '/'),
-      src: thumb.src.src,
-      iw: thumb.src.width,
-      ih: thumb.src.height,
-      crop: e.data.thumbnailCrop ?? {},
+      images: images.map((i) => toImg(i.path, i.src)),
+      related,
+      auto: images.find((i) => i.src === auto?.src)?.path ?? null,
+      slots,
     };
   })
   .filter((x) => x !== undefined);
@@ -34,66 +79,63 @@ const data = JSON.stringify({ entries, defaults: thumbnails, saveEndpoint: SAVE_
 
 <BaseLayout title="Thumbnail editor">
   <section class="te">
+    <a href="/dev" class="font-mono text-sm t-muted hover-accent transition-colors mb-8 inline-block">← back to dev tools</a>
     <h1 class="section-title text-3xl mb-2">Thumbnail editor</h1>
-    <p class="led-accent text-sm mb-8">// dev only · drag a frame to choose what's shown, scroll or use the slider to zoom</p>
+    <p class="led-accent text-sm mb-8">// dev only · each thumbnail has its own image and crop · drag the frame, scroll or use the slider to zoom</p>
 
     {entries.length === 0 ? (
       <p class="t-muted font-mono">// no posts or projects with images yet.</p>
     ) : (
       <>
         <div class="te-bar">
-          <label class="te-field">
+          <label class="te-field te-grow">
             <span>Entry</span>
             <select id="te-entry">
-              {entries.map((x) => <option value={x.key}>{x.collection} · {x.title}</option>)}
+              {entries.map((x) => <option value={x.key}>{x.label} · {x.title}</option>)}
             </select>
           </label>
-          <div class="te-field">
-            <span>Editing</span>
-            <div class="te-tabs" id="te-layer">
-              <button type="button" data-layer="base">Both</button>
-              <button type="button" data-layer="strip">Strip only</button>
-              <button type="button" data-layer="hero">Banner only</button>
-            </div>
-          </div>
-        </div>
-
-        <div class="te-stage" id="te-stage">
-          <img id="te-img" alt="" draggable="false" />
-          <div class="te-frame te-frame-strip" data-variant="strip" data-vp="desktop"><span>strip</span></div>
-          <div class="te-frame te-frame-strip te-frame-mobile" data-variant="strip" data-vp="mobile"></div>
-          <div class="te-frame te-frame-hero" data-variant="hero" data-vp="desktop"><span>banner</span></div>
-          <div class="te-frame te-frame-hero te-frame-mobile" data-variant="hero" data-vp="mobile"></div>
-        </div>
-        <p class="te-legend t-muted">
-          <span class="te-key te-key-strip"></span> strip
-          <span class="te-key te-key-hero"></span> banner
-          <span class="te-key te-key-mobile"></span> dashed = on a phone
-        </p>
-
-        <div class="te-controls">
-          <label class="te-field te-zoom">
-            <span>Zoom <b id="te-zoom-val"></b></span>
-            <input id="te-zoom" type="range" min="1" max="4" step="0.01" />
+          <label class="te-check font-mono" id="te-related-wrap" hidden>
+            <input type="checkbox" id="te-related" />
+            <span>images from related blog posts <b id="te-related-count"></b></span>
           </label>
-          <div class="te-readout font-mono t-muted" id="te-readout"></div>
           <div class="te-actions">
-            <button type="button" class="btn-outline" id="te-clear">Clear layer</button>
             <button type="button" class="btn-outline" id="te-reset">Reset all</button>
             <button type="button" class="btn-outline" id="te-copy">Copy YAML</button>
             <button type="button" class="btn-primary" id="te-save">Save to file</button>
           </div>
-          <p class="te-status font-mono text-sm" id="te-status"></p>
         </div>
+        <p class="te-status font-mono text-sm" id="te-status"></p>
 
-        <h2 class="font-display text-xl font-semibold t-text mt-10 mb-4">Previews</h2>
-        <div class="te-previews">
-          <figure><figcaption>Strip · desktop</figcaption><div class="te-pv" data-variant="strip" data-vp="desktop"><img alt="" /></div></figure>
-          <figure><figcaption>Banner · desktop</figcaption><div class="te-pv" data-variant="hero" data-vp="desktop"><img alt="" /></div></figure>
-          <div class="te-pv-row">
-            <figure><figcaption>Strip · phone</figcaption><div class="te-pv" data-variant="strip" data-vp="mobile"><img alt="" /></div></figure>
-            <figure><figcaption>Banner · phone</figcaption><div class="te-pv" data-variant="hero" data-vp="mobile"><img alt="" /></div></figure>
-          </div>
+        <div class="te-cards">
+          {SLOTS.map(({ v, s, key }) => (
+            <article class:list={['te-card', `te-card-${v}`]} data-slot={key} data-v={v} data-s={s}>
+              <header class="te-card-head">
+                <h2 class="font-display text-lg font-semibold t-text">
+                  <span class="te-swatch"></span>{NAME[v]} · {NAME[s]}
+                </h2>
+                <button type="button" class="te-link font-mono text-xs" data-act="reset">reset</button>
+              </header>
+              <div class="te-row">
+                <label class="te-field te-grow">
+                  <span>Image</span>
+                  <select data-act="image"></select>
+                </label>
+                <label class="te-field te-zoom">
+                  <span>Zoom <b data-out="zoom"></b></span>
+                  <input data-act="zoom" type="range" min="1" max="4" step="0.01" />
+                </label>
+              </div>
+              <div class="te-stage">
+                <img alt="" draggable="false" />
+                <div class="te-frame"></div>
+              </div>
+              <p class="te-none font-mono text-sm t-muted" hidden>// no thumbnail here. Pick an image to add one.</p>
+              <figure class="te-pv-wrap">
+                <figcaption class="font-mono" data-out="caption"></figcaption>
+                <div class="te-pv"><img alt="" /></div>
+              </figure>
+            </article>
+          ))}
         </div>
 
         <h2 class="font-display text-xl font-semibold t-text mt-10 mb-2">Frontmatter</h2>
@@ -106,12 +148,13 @@ const data = JSON.stringify({ entries, defaults: thumbnails, saveEndpoint: SAVE_
 </BaseLayout>
 
 <script>
-  type Crop = { x?: number; y?: number; zoom?: number };
-  type FullCrop = Crop & { strip?: Crop; hero?: Crop };
+  type Slot = { x?: number; y?: number; zoom?: number; image?: string };
   type Variant = 'strip' | 'hero';
-  type Layer = 'base' | Variant;
-  type Vp = 'desktop' | 'mobile';
-  interface Entry { key: string; collection: 'blog' | 'projects'; title: string; file: string; src: string; iw: number; ih: number; crop: FullCrop }
+  type Screen = 'desktop' | 'mobile';
+  type SlotKey = `${Variant}-${Screen}`;
+  interface Img { path: string; url: string; w: number; h: number }
+  interface Related { title: string; images: Img[] }
+  interface Entry { key: string; collection: 'blog' | 'projects'; title: string; file: string; images: Img[]; related: Related[]; auto: string | null; slots: Record<SlotKey, Slot> }
   interface Defaults { x: number; y: number; zoom: number; height: string | { mobile: string; desktop: string } }
 
   const dataEl = document.getElementById('te-data');
@@ -120,182 +163,223 @@ const data = JSON.stringify({ entries, defaults: thumbnails, saveEndpoint: SAVE_
   function init({ entries, defaults, saveEndpoint }: { entries: Entry[]; defaults: Record<Variant, Defaults>; saveEndpoint: string }) {
     const $ = <T extends HTMLElement>(id: string) => document.getElementById(id) as T;
     const select = $<HTMLSelectElement>('te-entry');
-    const stage = $<HTMLDivElement>('te-stage');
-    const img = $<HTMLImageElement>('te-img');
-    const zoom = $<HTMLInputElement>('te-zoom');
     const status = $<HTMLParagraphElement>('te-status');
-    const KEYS = ['x', 'y', 'zoom'] as const;
+    const NUM = ['x', 'y', 'zoom'] as const;
+    const cards = [...document.querySelectorAll<HTMLElement>('.te-card')];
 
     // Reference sizes of the real boxes on the site (content column is max-w-4xl minus padding).
-    const VIEWPORT: Record<Vp, number> = { desktop: 1280, mobile: 375 };
-    const content = (vp: Vp) => Math.min(VIEWPORT[vp], 896) - 48;
-    const width = (v: Variant, vp: Vp, e: Entry) =>
-      v === 'strip' ? content(vp) - 50 /* card padding + border */
-        : e.collection === 'blog' ? Math.min(content(vp), 768) : content(vp);
-    const height = (v: Variant, vp: Vp) => {
+    const VIEWPORT: Record<Screen, number> = { desktop: 1280, mobile: 375 };
+    const content = (s: Screen) => Math.min(VIEWPORT[s], 896) - 48;
+    const width = (v: Variant, s: Screen) =>
+      v === 'strip' ? content(s) - 50 /* card padding + border */
+        : entry.collection === 'blog' ? Math.min(content(s), 768) : content(s);
+    const height = (v: Variant, s: Screen) => {
       const h = defaults[v].height;
-      const css = typeof h === 'string' ? h : h[vp];
-      return css.replace(/([\d.]+)vw/g, (_, n) => `${(Number(n) * VIEWPORT[vp]) / 100}px`);
+      const css = typeof h === 'string' ? h : h[s];
+      return css.replace(/([\d.]+)vw/g, (_, n) => `${(Number(n) * VIEWPORT[s]) / 100}px`);
     };
-
-    // Measure a CSS length (e.g. clamp(...)) in px.
     const probe = document.createElement('div');
     probe.style.cssText = 'position:absolute;visibility:hidden;width:0';
     document.body.append(probe);
     const px = (css: string) => { probe.style.height = css; return probe.getBoundingClientRect().height; };
 
-    const state = new Map(entries.map((e) => [e.key, structuredClone(e.crop) as FullCrop]));
-    let entry = entries[0];
-    let layer: Layer = 'base';
+    const state = new Map(entries.map((e) => [e.key, structuredClone(e.slots)]));
+    let entry = entries.find((e) => e.key === new URLSearchParams(location.hash.slice(1)).get('entry')) ?? entries[0];
 
-    const fromHash = new URLSearchParams(location.hash.slice(1));
-    const hashEntry = entries.find((e) => e.key === fromHash.get('entry'));
-    if (hashEntry) entry = hashEntry;
-    if (['base', 'strip', 'hero'].includes(fromHash.get('layer') ?? '')) layer = fromHash.get('layer') as Layer;
+    const slot = (k: SlotKey) => state.get(entry.key)![k];
+    const relatedImgs = () => entry.related.flatMap((r) => r.images);
+    const imgByPath = (p?: string | null) => entry.images.find((i) => i.path === p) ?? relatedImgs().find((i) => i.path === p);
 
-    const crop = () => state.get(entry.key)!;
-    const target = (l: Layer): Crop => (l === 'base' ? crop() : (crop()[l] ??= {}));
-    const eff = (v: Variant) => {
-      const c = crop();
-      const get = (k: keyof Crop) => c[v]?.[k] ?? c[k] ?? defaults[v][k];
-      return { x: get('x'), y: get('y'), zoom: get('zoom') };
+    // "Images from related blog posts" checkbox, per entry; starts ticked if a thumbnail already uses one.
+    const relatedBox = $<HTMLInputElement>('te-related');
+    const showRelated = new Map(entries.map((e) => [e.key,
+      Object.values(e.slots).some((c) => e.related.some((r) => r.images.some((i) => i.path === c.image)))]));
+    relatedBox.addEventListener('change', () => { showRelated.set(entry.key, relatedBox.checked); render(); });
+
+    // Same rules as the site: 'none' = no thumbnail; otherwise the chosen image, else the automatic pick.
+    const eff = (v: Variant, s: Screen) => {
+      const c = slot(`${v}-${s}`);
+      const img: Img | null = c.image === 'none' ? null : imgByPath(c.image) ?? imgByPath(entry.auto) ?? null;
+      return { img, x: c.x ?? defaults[v].x, y: c.y ?? defaults[v].y, zoom: c.zoom ?? defaults[v].zoom };
     };
 
-    // Visible part of the image for a box, as fractions of the image (same maths as object-fit: cover
+    // Visible part of the image, as fractions of it (same maths as object-fit: cover
     // + object-position x% y% + scale(zoom) around the same point).
-    function region(v: Variant, vp: Vp) {
-      const W = width(v, vp, entry), H = px(height(v, vp));
-      const { x, y, zoom } = eff(v);
-      const s = Math.max(W / entry.iw, H / entry.ih) * zoom;
-      const fw = Math.min(1, W / (entry.iw * s)), fh = Math.min(1, H / (entry.ih * s));
+    function region(v: Variant, s: Screen) {
+      const { img, x, y, zoom } = eff(v, s);
+      if (!img) return { left: 0, top: 0, fw: 1, fh: 1 };
+      const W = width(v, s), H = px(height(v, s));
+      const sc = Math.max(W / img.w, H / img.h) * zoom;
+      const fw = Math.min(1, W / (img.w * sc)), fh = Math.min(1, H / (img.h * sc));
       return { left: (x / 100) * (1 - fw), top: (y / 100) * (1 - fh), fw, fh };
     }
 
     function render() {
-      const hash = `#entry=${encodeURIComponent(entry.key)}&layer=${layer}`;
+      const hash = `#entry=${encodeURIComponent(entry.key)}`;
       if (location.hash !== hash) history.replaceState(null, '', hash);
       select.value = entry.key;
-      if (img.getAttribute('src') !== entry.src) img.src = entry.src;
-      stage.style.aspectRatio = `${entry.iw} / ${entry.ih}`;
-      stage.style.width = `min(100%, calc(70vh * ${entry.iw / entry.ih}))`;
-      document.querySelectorAll<HTMLButtonElement>('#te-layer button').forEach((b) => b.classList.toggle('on', b.dataset.layer === layer));
+      $('te-related-wrap').hidden = entry.related.length === 0;
+      $('te-related-count').textContent = `(${relatedImgs().length})`;
+      relatedBox.checked = showRelated.get(entry.key)!;
 
-      stage.querySelectorAll<HTMLElement>('.te-frame').forEach((f) => {
-        const v = f.dataset.variant as Variant;
-        const r = region(v, f.dataset.vp as Vp);
-        Object.assign(f.style, { left: `${r.left * 100}%`, top: `${r.top * 100}%`, width: `${r.fw * 100}%`, height: `${r.fh * 100}%` });
-        f.classList.toggle('active', layer === 'base' || layer === v);
-      });
+      for (const card of cards) {
+        const v = card.dataset.v as Variant, s = card.dataset.s as Screen;
+        const c = slot(`${v}-${s}`);
+        const e = eff(v, s);
+        const stage = card.querySelector<HTMLElement>('.te-stage')!;
+        const pv = card.querySelector<HTMLElement>('.te-pv')!;
+        stage.hidden = !e.img;
+        card.querySelector<HTMLElement>('.te-none')!.hidden = !!e.img;
+        pv.classList.toggle('none', !e.img);
 
-      document.querySelectorAll<HTMLElement>('.te-pv').forEach((box) => {
-        const v = box.dataset.variant as Variant, vp = box.dataset.vp as Vp;
-        const { x, y, zoom } = eff(v);
-        box.style.width = `${width(v, vp, entry)}px`;
-        box.style.height = height(v, vp);
-        const pi = box.querySelector('img')!;
-        if (pi.getAttribute('src') !== entry.src) pi.src = entry.src;
-        Object.assign(pi.style, { objectPosition: `${x}% ${y}%`, transform: `scale(${zoom})`, transformOrigin: `${x}% ${y}%` });
-      });
+        // Image picker.
+        const picker = card.querySelector<HTMLSelectElement>('[data-act="image"]')!;
+        picker.innerHTML = '';
+        picker.append(new Option(`automatic (${entry.auto ?? 'none found'})`, ''));
+        picker.append(new Option('none · no thumbnail', 'none'));
+        const own = document.createElement('optgroup');
+        own.label = 'this entry';
+        for (const i of entry.images) own.append(new Option(i.path, i.path));
+        if (entry.images.length) picker.append(own);
+        for (const rel of entry.related) {
+          // With the checkbox off, only list a related image if this thumbnail already uses it.
+          const imgs = showRelated.get(entry.key) ? rel.images : rel.images.filter((i) => i.path === c.image);
+          if (!imgs.length) continue;
+          const group = document.createElement('optgroup');
+          group.label = `blog · ${rel.title}`;
+          for (const i of imgs) group.append(new Option(i.path.split('/').pop()!, i.path));
+          picker.append(group);
+        }
+        picker.value = c.image ?? '';
 
-      const shown = layer === 'base' ? eff('strip') : eff(layer);
-      zoom.value = String(shown.zoom);
-      $('te-zoom-val').textContent = `${shown.zoom.toFixed(2)}×`;
-      const s = eff('strip'), h = eff('hero');
-      $('te-readout').textContent = `strip x ${s.x.toFixed(1)} y ${s.y.toFixed(1)} zoom ${s.zoom.toFixed(2)} · banner x ${h.x.toFixed(1)} y ${h.y.toFixed(1)} zoom ${h.zoom.toFixed(2)}`;
-      $('te-yaml').textContent = yaml(crop()) || '# no thumbnailCrop: site defaults are used';
+        const zoom = card.querySelector<HTMLInputElement>('[data-act="zoom"]')!;
+        zoom.value = String(e.zoom);
+        zoom.disabled = !e.img;
+        card.querySelector('[data-out="zoom"]')!.textContent = `${e.zoom.toFixed(2)}×`;
+
+        pv.style.width = `${width(v, s)}px`;
+        pv.style.height = height(v, s);
+        card.querySelector('[data-out="caption"]')!.textContent = e.img
+          ? `preview at real size · x ${e.x.toFixed(1)} y ${e.y.toFixed(1)}`
+          : 'preview · no thumbnail';
+        if (!e.img) continue;
+
+        const stageImg = stage.querySelector('img')!;
+        if (stageImg.getAttribute('src') !== e.img.url) stageImg.src = e.img.url;
+        stage.style.aspectRatio = `${e.img.w} / ${e.img.h}`;
+        stage.style.width = `min(100%, calc(50vh * ${e.img.w / e.img.h}))`;
+        const r = region(v, s);
+        Object.assign(stage.querySelector<HTMLElement>('.te-frame')!.style, {
+          left: `${r.left * 100}%`, top: `${r.top * 100}%`, width: `${r.fw * 100}%`, height: `${r.fh * 100}%`,
+        });
+
+        const pi = pv.querySelector('img')!;
+        if (pi.getAttribute('src') !== e.img.url) pi.src = e.img.url;
+        Object.assign(pi.style, { objectPosition: `${e.x}% ${e.y}%`, transform: `scale(${e.zoom})`, transformOrigin: `${e.x}% ${e.y}%` });
+      }
+
+      $('te-yaml').textContent = yaml() || '# no thumbnailCrop: automatic image and site defaults are used';
     }
 
-    function yaml(c: FullCrop) {
-      const fmt = (o: Crop | undefined, pad: string) =>
-        KEYS.filter((k) => o?.[k] !== undefined).map((k) => `${pad}${k}: ${+o![k]!.toFixed(k === 'zoom' ? 2 : 1)}`);
-      const lines = fmt(c, '  ');
-      for (const v of ['strip', 'hero'] as const) {
-        const sub = fmt(c[v], '    ');
-        if (sub.length) lines.push(`  ${v}:`, ...sub);
+    // Frontmatter: one block per thumbnail that has any values.
+    function cropObject() {
+      const out: Record<string, Record<string, Slot>> = {};
+      for (const card of cards) {
+        const v = card.dataset.v as Variant, s = card.dataset.s as Screen;
+        const c = slot(`${v}-${s}`);
+        const clean: Slot = {};
+        for (const k of NUM) if (c[k] !== undefined) clean[k] = +c[k]!.toFixed(k === 'zoom' ? 2 : 1);
+        if (c.image) clean.image = c.image;
+        if (Object.keys(clean).length) (out[v] ??= {})[s] = clean;
+      }
+      return out;
+    }
+    function yaml() {
+      const lines: string[] = [];
+      for (const [v, screens] of Object.entries(cropObject())) {
+        lines.push(`  ${v}:`);
+        for (const [s, c] of Object.entries(screens)) {
+          lines.push(`    ${s}:`);
+          for (const k of NUM) if (c[k] !== undefined) lines.push(`      ${k}: ${c[k]}`);
+          if (c.image) lines.push(`      image: '${c.image.replace(/'/g, "''")}'`);
+        }
       }
       return lines.length ? ['thumbnailCrop:', ...lines].join('\n') : '';
     }
 
-    const dirty = (msg = 'unsaved changes') => { status.textContent = msg; status.className = 'te-status font-mono text-sm t-muted'; };
+    const dirty = () => { status.textContent = 'unsaved changes'; status.className = 'te-status font-mono text-sm t-muted'; };
+    const clamp = (n: number, a: number, b: number) => Math.min(b, Math.max(a, n));
 
-    // Dragging a frame: move it so the same image point stays under the pointer.
-    let drag: { v: Variant; vp: Vp; sx: number; sy: number; left: number; top: number } | null = null;
-    const clamp = (v: number, a: number, b: number) => Math.min(b, Math.max(a, v));
-
-    function setFrom(v: Variant, vp: Vp, left: number, top: number) {
-      const r = region(v, vp);
-      const t = target(layer === 'base' ? 'base' : v);
-      // In "Both" mode, don't write a shared value that this variant overrides anyway.
-      const own = (k: 'x' | 'y') => layer === 'base' && crop()[v]?.[k] !== undefined;
-      if (!own('x')) {
-        if (r.fw < 1) t.x = (clamp(left, 0, 1 - r.fw) / (1 - r.fw)) * 100;
-        else if (t.x === undefined && layer !== 'base') t.x = eff(v).x;
-      }
-      if (!own('y')) {
-        if (r.fh < 1) t.y = (clamp(top, 0, 1 - r.fh) / (1 - r.fh)) * 100;
-        else if (t.y === undefined && layer !== 'base') t.y = eff(v).y;
-      }
+    function setFrom(v: Variant, s: Screen, left: number, top: number) {
+      const r = region(v, s);
+      const c = slot(`${v}-${s}`);
+      if (r.fw < 1) c.x = (clamp(left, 0, 1 - r.fw) / (1 - r.fw)) * 100;
+      if (r.fh < 1) c.y = (clamp(top, 0, 1 - r.fh) / (1 - r.fh)) * 100;
+      dirty();
+      render();
+    }
+    function setZoom(v: Variant, s: Screen, z: number) {
+      slot(`${v}-${s}`).zoom = clamp(z, 1, 4);
       dirty();
       render();
     }
 
-    stage.addEventListener('pointerdown', (ev) => {
-      ev.preventDefault();
-      // Frames overlap: grab the smallest one under the pointer (the strip usually sits inside the banner).
-      const area = (el: Element) => { const r = el.getBoundingClientRect(); return r.width * r.height; };
-      const hit = document.elementsFromPoint(ev.clientX, ev.clientY)
-        .filter((el): el is HTMLElement => el instanceof HTMLElement && el.matches('.te-frame.active:not(.te-frame-mobile)'))
-        .sort((a, b) => area(a) - area(b))[0];
-      const frame = hit
-        ?? stage.querySelector<HTMLElement>(`.te-frame.active[data-vp="desktop"]${layer === 'hero' ? '[data-variant="hero"]' : '[data-variant="strip"]'}`)!;
-      const v = frame.dataset.variant as Variant, vp = frame.dataset.vp as Vp;
-      const rect = stage.getBoundingClientRect();
-      let r = region(v, vp);
-      if (!hit) {
-        // Clicked outside a frame: centre the frame on that point first.
-        const cx = (ev.clientX - rect.left) / rect.width, cy = (ev.clientY - rect.top) / rect.height;
-        setFrom(v, vp, cx - r.fw / 2, cy - r.fh / 2);
-        r = region(v, vp);
-      }
-      drag = { v, vp, sx: ev.clientX, sy: ev.clientY, left: r.left, top: r.top };
-      stage.setPointerCapture(ev.pointerId);
-    });
-    stage.addEventListener('pointermove', (ev) => {
-      if (!drag) return;
-      const rect = stage.getBoundingClientRect();
-      setFrom(drag.v, drag.vp, drag.left + (ev.clientX - drag.sx) / rect.width, drag.top + (ev.clientY - drag.sy) / rect.height);
-    });
-    stage.addEventListener('pointerup', () => (drag = null));
-    stage.addEventListener('pointercancel', () => (drag = null));
+    for (const card of cards) {
+      const v = card.dataset.v as Variant, s = card.dataset.s as Screen;
+      const stage = card.querySelector<HTMLElement>('.te-stage')!;
+      const frame = stage.querySelector<HTMLElement>('.te-frame')!;
+      stage.querySelector('img')!.addEventListener('load', render);
 
-    const setZoom = (z: number) => {
-      const t = target(layer);
-      t.zoom = clamp(z, 1, 4);
-      if (layer !== 'base') { const e = eff(layer); t.x ??= e.x; t.y ??= e.y; }
-      dirty();
-      render();
-    };
-    zoom.addEventListener('input', () => setZoom(Number(zoom.value)));
-    stage.addEventListener('wheel', (ev) => {
-      ev.preventDefault();
-      const current = layer === 'base' ? eff('strip').zoom : eff(layer).zoom;
-      setZoom(current * (ev.deltaY < 0 ? 1.1 : 1 / 1.1));
-    }, { passive: false });
+      // Drag the frame (or click elsewhere to centre it there, then keep dragging).
+      let drag: { sx: number; sy: number; left: number; top: number } | null = null;
+      stage.addEventListener('pointerdown', (ev) => {
+        ev.preventDefault();
+        let r = region(v, s);
+        if (ev.target !== frame) {
+          const rect = stage.getBoundingClientRect();
+          setFrom(v, s, (ev.clientX - rect.left) / rect.width - r.fw / 2, (ev.clientY - rect.top) / rect.height - r.fh / 2);
+          r = region(v, s);
+        }
+        drag = { sx: ev.clientX, sy: ev.clientY, left: r.left, top: r.top };
+        stage.setPointerCapture(ev.pointerId);
+      });
+      stage.addEventListener('pointermove', (ev) => {
+        if (!drag) return;
+        const rect = stage.getBoundingClientRect();
+        setFrom(v, s, drag.left + (ev.clientX - drag.sx) / rect.width, drag.top + (ev.clientY - drag.sy) / rect.height);
+      });
+      stage.addEventListener('pointerup', () => (drag = null));
+      stage.addEventListener('pointercancel', () => (drag = null));
+      stage.addEventListener('wheel', (ev) => {
+        ev.preventDefault();
+        setZoom(v, s, eff(v, s).zoom * (ev.deltaY < 0 ? 1.1 : 1 / 1.1));
+      }, { passive: false });
+
+      card.querySelector<HTMLInputElement>('[data-act="zoom"]')!
+        .addEventListener('input', (ev) => setZoom(v, s, Number((ev.target as HTMLInputElement).value)));
+      card.querySelector<HTMLSelectElement>('[data-act="image"]')!.addEventListener('change', (ev) => {
+        const val = (ev.target as HTMLSelectElement).value;
+        const c = slot(`${v}-${s}`);
+        if (val) c.image = val;
+        else delete c.image;
+        dirty();
+        render();
+      });
+      card.querySelector('[data-act="reset"]')!.addEventListener('click', () => {
+        state.get(entry.key)![`${v}-${s}`] = {};
+        dirty();
+        render();
+      });
+    }
 
     select.addEventListener('change', () => { entry = entries.find((e) => e.key === select.value)!; status.textContent = ''; render(); });
-    document.querySelectorAll<HTMLButtonElement>('#te-layer button').forEach((b) =>
-      b.addEventListener('click', () => { layer = b.dataset.layer as Layer; render(); }));
-
-    $('te-clear').addEventListener('click', () => {
-      const c = crop();
-      if (layer === 'base') KEYS.forEach((k) => delete c[k]);
-      else delete c[layer];
+    $('te-reset').addEventListener('click', () => {
+      for (const card of cards) state.get(entry.key)![card.dataset.slot as SlotKey] = {};
       dirty();
       render();
     });
-    $('te-reset').addEventListener('click', () => { state.set(entry.key, {}); dirty(); render(); });
     $('te-copy').addEventListener('click', async () => {
-      await navigator.clipboard.writeText(yaml(crop()));
+      await navigator.clipboard.writeText(yaml());
       status.textContent = 'copied to clipboard';
     });
     $('te-save').addEventListener('click', async () => {
@@ -304,7 +388,7 @@ const data = JSON.stringify({ entries, defaults: thumbnails, saveEndpoint: SAVE_
         const res = await fetch(saveEndpoint, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ file: entry.file, crop: crop() }),
+          body: JSON.stringify({ file: entry.file, crop: cropObject() }),
         });
         const body = await res.json();
         if (!res.ok) throw new Error(body.error);
@@ -316,53 +400,48 @@ const data = JSON.stringify({ entries, defaults: thumbnails, saveEndpoint: SAVE_
       }
     });
 
-    img.addEventListener('load', render);
     window.addEventListener('resize', render);
     render();
   }
 </script>
 
 <style>
-  .te-bar { display: flex; flex-wrap: wrap; gap: 1rem 1.5rem; margin-bottom: 1.25rem; align-items: end; }
+  .te-bar { display: flex; flex-wrap: wrap; gap: 1rem 1.5rem; align-items: end; margin-bottom: 0.5rem; }
+  .te-row { display: flex; flex-wrap: wrap; gap: 0.75rem 1.25rem; align-items: end; margin-bottom: 0.9rem; }
+  .te-grow { flex: 1 1 14rem; min-width: 0; }
+  .te-check { display: flex; align-items: center; gap: 0.45rem; font-size: 0.8rem; color: var(--muted); padding-bottom: 0.5rem; cursor: pointer; }
+  .te-check[hidden] { display: none; }
+  .te-check input { accent-color: var(--accent); }
   .te-field { display: flex; flex-direction: column; gap: 0.35rem; font-family: var(--font-mono); font-size: 0.8rem; color: var(--muted); }
-  .te-field select { background: var(--surface); color: var(--text); border: 1px solid var(--border); border-radius: 0.5rem; padding: 0.45rem 0.6rem; max-width: 100%; }
-  .te-tabs { display: inline-flex; border: 1px solid var(--border); border-radius: 0.5rem; overflow: hidden; }
-  .te-tabs button { padding: 0.45rem 0.8rem; color: var(--muted); background: var(--surface); }
-  .te-tabs button + button { border-left: 1px solid var(--border); }
-  .te-tabs button.on { background: var(--accent); color: var(--bg); }
-
-  .te-stage { position: relative; width: 100%; margin: 0 auto; border-radius: 0.5rem; overflow: hidden; cursor: crosshair; touch-action: none; user-select: none; background: var(--surface); }
-  .te-stage img { width: 100%; height: 100%; display: block; opacity: 0.55; pointer-events: none; }
-  .te-frame { position: absolute; border: 2px solid; pointer-events: none; opacity: 0.35; box-sizing: border-box; }
-  .te-frame span { position: absolute; top: 0; left: 0; font: 600 0.7rem var(--font-mono); padding: 0.1rem 0.35rem; color: #000; }
-  .te-frame.active { opacity: 1; pointer-events: auto; cursor: move; }
-  .te-frame.active:not(.te-frame-mobile) { box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.15); }
-  .te-frame-mobile { border-style: dashed; pointer-events: none !important; }
-  .te-frame-strip { border-color: #22d3ee; }
-  .te-frame-strip span { background: #22d3ee; }
-  .te-frame-hero { border-color: #f59e0b; }
-  .te-frame-hero span { background: #f59e0b; top: auto; bottom: 0; }
-
-  .te-legend { display: flex; flex-wrap: wrap; align-items: center; gap: 0.35rem 0.5rem; font: 0.75rem var(--font-mono); margin: 0.6rem 0 1.25rem; }
-  .te-key { display: inline-block; width: 1.4rem; height: 0.7rem; border: 2px solid; margin-left: 0.6rem; }
-  .te-key-strip { border-color: #22d3ee; }
-  .te-key-hero { border-color: #f59e0b; }
-  .te-key-mobile { border-style: dashed; border-color: var(--muted); }
-
-  .te-controls { display: grid; gap: 0.9rem; }
-  .te-zoom input { width: min(100%, 22rem); accent-color: var(--accent); }
-  .te-readout { font-size: 0.75rem; }
+  .te-field select { background: var(--surface); color: var(--text); border: 1px solid var(--border); border-radius: 0.5rem; padding: 0.45rem 0.6rem; width: 100%; }
+  .te-zoom input { width: min(100%, 14rem); accent-color: var(--accent); }
   .te-actions { display: flex; flex-wrap: wrap; gap: 0.6rem; }
   .te-actions button { padding: 0.45rem 0.9rem; font-size: 0.85rem; }
-  .te-status { min-height: 1.25rem; }
+  .te-status { min-height: 1.25rem; margin-bottom: 1rem; }
   .te-error { color: #f87171; }
 
-  .te-previews { display: grid; gap: 1.25rem; }
-  .te-previews figure { margin: 0; max-width: 100%; overflow-x: auto; }
-  .te-previews figcaption { font: 0.75rem var(--font-mono); color: var(--muted); margin-bottom: 0.4rem; }
-  .te-pv-row { display: flex; flex-wrap: wrap; gap: 1.25rem; }
-  .te-pv { overflow: hidden; border: 1px solid var(--border); border-radius: 0.5rem; background: var(--surface); }
+  .te-cards { display: grid; gap: 1.5rem; }
+  .te-card { border: 1px solid var(--border); border-radius: 0.75rem; padding: 1rem 1.25rem 1.25rem; background: var(--surface); min-width: 0; }
+  .te-card-strip { --slot: #22d3ee; }
+  .te-card-hero { --slot: #f59e0b; }
+  .te-card[data-s='mobile'] .te-frame { border-style: dashed; }
+  .te-card-head { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-bottom: 0.75rem; }
+  .te-swatch { display: inline-block; width: 0.75rem; height: 0.75rem; border-radius: 0.2rem; background: var(--slot); margin-right: 0.5rem; vertical-align: 0.05em; }
+  .te-link { color: var(--muted); text-decoration: underline; }
+  .te-link:hover { color: var(--accent); }
+
+  .te-stage { position: relative; width: 100%; margin: 0 auto; border-radius: 0.5rem; overflow: hidden; cursor: crosshair; touch-action: none; user-select: none; background: var(--bg); }
+  .te-stage[hidden] { display: none; }
+  .te-stage img { width: 100%; height: 100%; display: block; opacity: 0.55; pointer-events: none; }
+  .te-frame { position: absolute; border: 2px solid var(--slot); box-sizing: border-box; cursor: move; box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.2); }
+  .te-none { padding: 2rem 1rem; text-align: center; border: 1px dashed var(--border); border-radius: 0.5rem; }
+
+  .te-pv-wrap { margin: 0.9rem 0 0; max-width: 100%; overflow-x: auto; }
+  .te-pv-wrap figcaption { font-size: 0.72rem; color: var(--muted); margin-bottom: 0.4rem; }
+  .te-pv { overflow: hidden; border: 1px solid var(--border); border-radius: 0.5rem; background: var(--bg); }
   .te-pv img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .te-pv.none { border-style: dashed; background: repeating-linear-gradient(45deg, transparent 0 8px, var(--border) 8px 9px); }
+  .te-pv.none img { display: none; }
 
   .te-yaml { background: var(--surface); border: 1px solid var(--border); border-radius: 0.5rem; padding: 0.9rem 1rem; font: 0.8rem var(--font-mono); color: var(--text); white-space: pre-wrap; }
 </style>
