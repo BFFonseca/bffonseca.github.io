@@ -111,14 +111,13 @@ thumbnailCrop:
 
 Every field is optional. Each slot uses the most specific value set: `strip`/`hero` → `desktop`/`mobile` value, then the `strip`/`hero` value, then the top-level value, then the site default. Without an `image`, the automatic thumbnail (above) is used. Use `image: none` for no thumbnail, at any level: top level hides all of them, `strip: { image: none }` hides only the index strip, `strip: { mobile: { image: none } }` hides it only on phones.
 
-**Interactive editor:** run `npm run dev` and click **dev** in the nav (or open [`/dev`](http://localhost:4321/dev)), then **Thumbnail editor**. Pick a post or project, then:
+**Interactive editor:** run `npm run dev` and click **dev** in the nav (or open [`/dev`](http://localhost:4321/dev)), then **Thumbnail editor**. Pick a post or project; each of the four thumbnails (strip · desktop, strip · phone, banner · desktop, banner · phone) has its own card, edited independently:
 
-- **Thumbnail** (Both / Strip / Banner) and **Screen** (Both / Desktop / Phone) choose which slots you're editing: the shared settings, one thumbnail on both screens, or a single slot.
-- **Image** picks any image from the entry's folder for the selection, **none** for no thumbnail, or inherits it.
-- **Drag a frame** over the full image to choose what's shown (cyan = strip, amber = banner, dashed = phone). Clicking outside a frame jumps it there. When the selected slots use different images, each image gets its own panel; dragging or scrolling on a panel only changes the thumbnails on that panel (saved at their own strip/banner + desktop/phone level).
+- **Image** picks any image from the entry's folder, **none** for no thumbnail, or **automatic**.
+- **Drag the frame** over the image to choose what's shown; clicking elsewhere on the image jumps it there.
 - **Scroll** over the image or use the slider to **zoom**.
-- Live previews show all four slots at their real sizes, with the image and values each one ends up with.
-- **Save to file** writes `thumbnailCrop` into the entry's frontmatter (only that block is touched); **Copy YAML** copies it instead. **Clear selection** removes the selected level's values; **Reset all** removes everything.
+- A preview at the real size sits under each card; **reset** clears that thumbnail.
+- **Save to file** writes `thumbnailCrop` into the entry's frontmatter (only that block is touched), as one `strip`/`hero` → `desktop`/`mobile` block per thumbnail. Shared values already in the file are folded into each thumbnail first, so what you see is what's saved. **Copy YAML** copies it instead; **Reset all** clears everything.
 
 The dev page and editor only exist in the dev server (`src/integrations/`); they aren't part of `npm run build`. Add new dev tools to `src/integrations/dev-tools/tools.ts`.
 
