@@ -112,3 +112,10 @@
 .thumb-strip { height: 5rem; border-radius: 0.5rem; margin-bottom: 0.875rem; }
 .thumb-hero  { height: clamp(10rem, 40vw, 20rem); border-radius: 0.75rem; margin-bottom: 2rem; }
 @media (min-width: 768px) { .thumb-strip { height: 6rem; } }
+
+/* Centre images that sit on their own line in Markdown (![alt](src)),
+   so posts don't need <p align="center"> wrappers. */
+.prose-content p > img {
+  display: block;
+  margin-inline: auto;
+}

@@ -90,6 +90,10 @@ Each entry gets a thumbnail automatically: a file named `thumbnail.png`, `thumbn
 
 The thumbnail shows as a thin cropped strip between the title and description on the `/blog` and `/projects` index cards, and as a full-width banner (capped at 20rem tall) at the top of the post or project page. Use `thumbnailPosition` to choose which part of the image stays visible when it's cropped.
 
+### Images
+
+A Markdown image on its own line (`![Alt text](media/photo.jpg)`) is centred automatically.
+
 ### Image carousels
 
 Wrap images in `<div class="carousel">` in any blog post or project page:
