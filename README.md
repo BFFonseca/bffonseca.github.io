@@ -148,6 +148,22 @@ Markdown images also work, with a blank line after `<div class="carousel">` and 
 
 Pushes to `main` trigger the GitHub Actions workflow (`.github/workflows/deploy.yml`), which builds the site and publishes it to GitHub Pages. No manual steps required.
 
+### Version history
+
+Every PR merged into `main` gets a frozen copy of the site at `/versions/pr-<N>/`, which you pick from the dropdown in the nav (in the footer on phones). Old versions show a banner with the same dropdown and a link back to the release.
+
+- `scripts/versions.mjs build` builds each merged PR that isn't saved yet, from its merge commit. The deploy workflow saves the output to the `versions` branch, so a PR is only ever built once. A PR that fails to build is left out; retry it with `--retry-failed`.
+- `scripts/versions.mjs assemble` copies the saved builds into `dist/versions/`, rewrites their root links (`/blog` → `/versions/pr-<N>/blog`), adds the banner and a `noindex` tag, and writes `versions.json`. Hashed `_astro/` assets are shared instead of copied into every version.
+- The banner and dropdown live in `public/version-switcher.js`. Every version loads it from the release, so changes to it reach old versions too.
+- The newest PR is left out while it matches `main` exactly, since that version is the release. A direct commit to `main` after it makes it a separate version.
+
+To try it locally with a few PRs:
+
+```bash
+node scripts/versions.mjs build --store ../versions-store --only 21,33
+npm run build && node scripts/versions.mjs assemble --store ../versions-store && npm run preview
+```
+
 ---
 
 > This page and most of the files in this repository have been created by or with the help of AI. More precisely by Anthropic's Claude using the Sonnet 4.6 Extended, Sonnet 5, Opus 4.8 and Fable 5 models.

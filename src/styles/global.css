@@ -124,3 +124,18 @@
   .thumb-hide-md { display: none; } /* `image: none` on desktop only */
   .thumb img { object-position: var(--tx-md) var(--ty-md); transform-origin: var(--tx-md) var(--ty-md); transform: scale(var(--tz-md)); }
 }
+
+/* Version switcher dropdown, filled in by public/version-switcher.js */
+.version-select {
+  width: 6.5rem; /* the options are long; keep the closed dropdown narrow */
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  padding: 0.375rem 0.5rem;
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  background: var(--bg);
+  color: var(--muted);
+  text-overflow: ellipsis;
+  cursor: pointer;
+}
+.version-select:hover { color: var(--text); }

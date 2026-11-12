@@ -34,6 +34,9 @@ const isActive = (href: string) => pathname === href || pathname.startsWith(href
         ))}
       </ul>
 
+      <!-- Site version dropdown (sm and up; on phones it sits in the Footer) -->
+      <span data-version-switcher hidden class="max-sm:hidden"></span>
+
       <!-- Dark/Light mode toggle -->
       <button
         id="theme-toggle"
@@ -49,6 +52,9 @@ const isActive = (href: string) => pathname === href || pathname.startsWith(href
 <style>
   .active-link { color: var(--accent) !important; }
 </style>
+
+<!-- Shared with old versions, so it's served as-is from public/ -->
+<script is:inline src="/version-switcher.js" defer></script>
 
 <script>
   const html = document.documentElement;
