@@ -38,10 +38,13 @@ function relatedImages(project: (typeof projects)[number]) {
 }
 
 const entries = [
-  ...blog.map((e) => ({ e, collection: 'blog' as const })),
-  ...projects.map((e) => ({ e, collection: 'projects' as const })),
+  // Blog posts live in numbered folders (content/blog/<n>/...): list them by that number.
+  ...blog
+    .map((e) => ({ e, collection: 'blog' as const, number: Number(e.id.split('/')[0]) || undefined }))
+    .sort((a, b) => (a.number ?? Infinity) - (b.number ?? Infinity)),
+  ...projects.map((e) => ({ e, collection: 'projects' as const, number: undefined })),
 ]
-  .map(({ e, collection }) => {
+  .map(({ e, collection, number }) => {
     const images = entryImages(e);
     const related = collection === 'projects' ? relatedImages(e as (typeof projects)[number]) : [];
     if ((!images.length && !related.length) || !e.filePath) return undefined;
@@ -60,6 +63,7 @@ const entries = [
     return {
       key: `${collection}/${e.id}`,
       collection,
+      label: number !== undefined ? `blog · #${number}` : collection,
       title: e.data.title + ('draft' in e.data && e.data.draft ? ' (draft)' : ''),
       file: e.filePath.replace(/\\/g, '/'),
       images: images.map((i) => toImg(i.path, i.src)),
@@ -87,7 +91,7 @@ const data = JSON.stringify({ entries, defaults: thumbnails, saveEndpoint: SAVE_
           <label class="te-field te-grow">
             <span>Entry</span>
             <select id="te-entry">
-              {entries.map((x) => <option value={x.key}>{x.collection} · {x.title}</option>)}
+              {entries.map((x) => <option value={x.key}>{x.label} · {x.title}</option>)}
             </select>
           </label>
           <label class="te-check font-mono" id="te-related-wrap" hidden>
