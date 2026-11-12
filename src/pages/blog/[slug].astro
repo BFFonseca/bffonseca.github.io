@@ -1,5 +1,6 @@
 ---
 import { getCollection, render } from "astro:content";
+import ImageCarousels from "../../components/ImageCarousels.astro";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import Comments from "../../components/Comments.astro";
 import ViewCount from "../../components/ViewCount.astro";
@@ -54,6 +55,7 @@ const thumb = getThumbnail(post);
 
     <div class="prose-content">
       <Content />
+      <ImageCarousels />
     </div>
 
     <Comments term={slug} />

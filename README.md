@@ -90,6 +90,28 @@ Each entry gets a thumbnail automatically: a file named `thumbnail.png`, `thumbn
 
 The thumbnail shows as a thin cropped strip between the title and description on the `/blog` and `/projects` index cards, and as a full-width banner (capped at 20rem tall) at the top of the post or project page. Use `thumbnailPosition` to choose which part of the image stays visible when it's cropped.
 
+### Image carousels
+
+Wrap images in `<div class="carousel">` in any blog post or project page:
+
+```html
+<div class="carousel">
+  <img src="https://raw.githubusercontent.com/.../media/one.jpg" alt="First" title="Optional caption" />
+  <img src="https://raw.githubusercontent.com/.../media/two.jpg" alt="Second" />
+</div>
+```
+
+Markdown images also work, with a blank line after `<div class="carousel">` and before `</div>`:
+
+```md
+<div class="carousel">
+
+![First](media/one.jpg "Optional caption")
+![Second](media/two.jpg)
+
+</div>
+```
+
 ## Deployment
 
 Pushes to `main` trigger the GitHub Actions workflow (`.github/workflows/deploy.yml`), which builds the site and publishes it to GitHub Pages. No manual steps required.
