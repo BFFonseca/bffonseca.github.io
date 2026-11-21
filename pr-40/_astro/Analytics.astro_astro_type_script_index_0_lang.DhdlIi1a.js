@@ -1,0 +1,1 @@
+import{t as e}from"./goatcounter.87PdrYe2.js";var t=document.querySelector(`meta[name="goatcounter-code"]`)?.content;if(t){window.goatcounter={path:()=>e()};let n=document.createElement(`script`);n.src=`https://gc.zgo.at/count.js`,n.async=!0,n.dataset.goatcounter=`https://${t}.goatcounter.com/count`,document.head.appendChild(n)}

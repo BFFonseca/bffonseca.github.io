@@ -278,5 +278,13 @@
     "branch": "related-images-fix",
     "title": "Thumbnail editor: explain when related posts have no images",
     "status": "ok"
+  },
+  "40": {
+    "number": 40,
+    "sha": "ecfb19fb06c9bdbf8bc91dd7a438d34b4cfde918",
+    "date": "2026-11-12T18:34:04Z",
+    "branch": "content-update",
+    "title": "Content update",
+    "status": "ok"
   }
 }
